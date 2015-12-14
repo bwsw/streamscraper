@@ -57,25 +57,30 @@ public class StreamScraperMgmtService {
 		statement = session.prepare("INSERT INTO pstreams (stype, id) VALUES(?, ?)");
 		insertPstreamStmt = new BoundStatement(statement);		
 
-		statement = session.prepare("INSERT INTO pstreams_properties (pstype, key, value, stream_id) VALUES(?, ?, ?, ?)");
+		statement = session.prepare("INSERT INTO pstreams_properties (pstype, key, value, stream_id) " + 
+									"VALUES(?, ?, ?, ?)");
 		insertPstreamPropertyStmt = new BoundStatement(statement);		
 
-		statement = session.prepare("SELECT stream_id FROM pstreams_properties WHERE pstype = ? AND key = ? AND value = ?");
+		statement = session.prepare("SELECT stream_id FROM pstreams_properties WHERE " + 
+									" pstype = ? AND key = ? AND value = ?");
 		selectStreamByPropertyStmt = new BoundStatement(statement);		
 
 		statement = session.prepare("SELECT vstream FROM streammap WHERE vstream = ?");
 		selectVstreamByNameStmt = new BoundStatement(statement);		
 
-		statement = session.prepare("UPDATE pstreams_counters SET vstream_ctr = vstream_ctr + 1 WHERE stream_id = ?");
+		statement = session.prepare("UPDATE pstreams_counters SET vstream_ctr = vstream_ctr + 1 " + 
+									"WHERE stream_id = ?");
 		updatePstreamVstreamCntrsStmt = new BoundStatement(statement);
 
 		statement = session.prepare("SELECT vstream_ctr FROM pstreams_counters WHERE stream_id = ?");
 		selectPstreamVstreamCntrsStmt = new BoundStatement(statement);
 
-		statement = session.prepare("INSERT INTO streammap (vstream, handler, pstream, vsdeployment_type, vstype) VALUES(?, ?, ?, ?, ?)");
+		statement = session.prepare("INSERT INTO streammap (vstream, handler, pstream, vsdeployment_type, vstype) " + 
+									"VALUES(?, ?, ?, ?, ?)");
 		insertVstreamMappingStmt = new BoundStatement(statement);		
 
-		statement = session.prepare("INSERT INTO streamrmap (vstype, pstype, pstream , vstream) VALUES(?, ?, ?, ?)");
+		statement = session.prepare("INSERT INTO streamrmap (vstype, pstype, pstream , vstream) " + 
+									"VALUES(?, ?, ?, ?)");
 		insertReverseVstreamMappingStmt = new BoundStatement(statement);		
 
 		statement = session.prepare("INSERT INTO pstreams_solid (pstream, is_solid) VALUES(?, true)");
@@ -204,10 +209,17 @@ public class StreamScraperMgmtService {
 		}
 		
 		// create vstream mapping
-		session.execute(insertVstreamMappingStmt.bind(vsname, ByteBuffer.wrap(handler.getBytes()), pstream, vsdeployment_type, vstype));
+		ByteBuffer bbuf = null;
+		if (handler != null)
+			bbuf = ByteBuffer.wrap(handler.getBytes());
+		
+		session.execute(insertVstreamMappingStmt.bind(vsname, bbuf, pstream, vsdeployment_type, vstype));
+		// create reverse mapping
 		session.execute(insertReverseVstreamMappingStmt.bind(vstype, vsdeployment_type, pstream, vsname));
+		// update counters
 		session.execute(updatePstreamVstreamCntrsStmt.bind(pstream));
 		if (vstype == VTYPE_SOLID) {
+			// update solid state if vstype should be solid
 			session.execute(insertPstreamSolidStateStmt.bind(pstream));
 		}
 	}

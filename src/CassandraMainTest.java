@@ -22,7 +22,7 @@ public class CassandraMainTest {
 											StreamScraperMgmtService.VTYPE_EPHEMERAL, 
 											"history", 
 											"99", 
-											"function (){}");	
+											"");	
 			m.end();
 		}
 		catch(Exception e) {
