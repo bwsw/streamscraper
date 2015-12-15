@@ -58,7 +58,7 @@ public class StreamsStorageUnitTests {
 			.setProperty("property2", "value2")
 			.setProperty(PlatformStream.P_PARALLEL, "true")
 			.setProperty(PlatformStream.P_EPHEMERAL, "true")
-			.addVirtualstream((VirtualStream)(new VirtualStream())
+			.addVirtualStream((VirtualStream)(new VirtualStream())
 					.setProperty(PlatformStream.P_PARALLEL, "true")
 					.setProperty(PlatformStream.P_EPHEMERAL, "true"));
 		ss.save(ps);

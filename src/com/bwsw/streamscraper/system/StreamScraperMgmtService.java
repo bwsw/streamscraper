@@ -20,7 +20,7 @@ public class StreamScraperMgmtService {
 
 	Cluster cluster;
 	Session session;
-	Properties props;
+	static Properties props;
 	
 	public BoundStatement insertPstreamPropertiesStmt;
 	public BoundStatement insertPstreamVstreamsStmt;	
@@ -50,6 +50,10 @@ public class StreamScraperMgmtService {
 	
 	public Session getSession() {
 		return session;
+	}
+	
+	public static String getProperty(String pname) {
+		return props.getProperty(pname);
 	}
 	
 	public StreamScraperMgmtService() throws Exception {

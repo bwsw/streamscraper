@@ -1,8 +1,11 @@
 package com.bwsw.streamscraper.system;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public class VirtualStream extends PlatformStream {
+	
+	PlatformStream assignedStream;
 	
 	public static void addPolicyCheck(VirtualStream vs, PlatformStream ps) throws IncompatibleStreamException {
 		String excMessage = "";
@@ -67,15 +70,21 @@ public class VirtualStream extends PlatformStream {
 				break;								
 			}		
 
+			if (null != vs.getAssignedStream()) {
+				excMessage = "Vstream has assigned Pstream (already bound).";
+				break;												
+			}
+
 			if (vs.getHasChanges()) {
 				excMessage = "Vstream has unsaved changes. Will not save. Save it first.";
 				break;												
 			}
-
+			
 			if (ps.getHasChanges()) {
 				excMessage = "Pstream has unsaved changes. Will not save. Save it first.";
 				break;												
 			}
+		
 			
 			return;
 		}
@@ -95,6 +104,7 @@ public class VirtualStream extends PlatformStream {
 			ps.setProperty(PlatformStream.P_EPHEMERAL, ephemeral);
 
 		ps.setHasChanges(true);
+		vs.assignStream(ps);
 		
 		if (null != ephemeral && null != solid)
 			throw new ImpossibleStreamException("Both P_EPHEMERAL && P_SOLID are set. Nonsense! Use addPolicyCheck first.");
@@ -104,16 +114,43 @@ public class VirtualStream extends PlatformStream {
 	public VirtualStream() {
 		// TODO Auto-generated constructor stub
 		super();
+		assignedStream = null;
 	}
 	
 	public VirtualStream(UUID id) {
 		super(id);
+		assignedStream = null;
 	}
 	
 	public VirtualStream(PlatformStream pcopy) {
 		super(pcopy.getID());
-		this.vstreams = pcopy.vstreams;
-		this.properties = pcopy.properties;
+		assignedStream = null;
+		vstreams = pcopy.vstreams;
+		properties = pcopy.properties;
+		setHasChanges(true);
+	}
+	
+	protected void assignStream(PlatformStream ps) {
+		assignedStream = ps;
+		setHasChanges(true);
 	}
 
+	public PlatformStream getAssignedStream() {
+		return assignedStream;
+	}
+	
+	@Override
+	public PlatformStream addVirtualStream(VirtualStream s) throws ImpossibleStreamException {
+		throw new ImpossibleStreamException("Vstreams unable to bind to another Vstreams.");
+	}
+	
+	@Override
+	public VirtualStream getVirtualStream(UUID id) {
+		return null;
+	}
+	
+	@Override
+	public HashMap<UUID, VirtualStream> getVirtualStreams() {
+		return null;
+	}
 }

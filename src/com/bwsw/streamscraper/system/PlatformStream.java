@@ -77,11 +77,11 @@ public class PlatformStream {
 		return psid;
 	}
 	
-	public HashMap<UUID, VirtualStream> getVstreams() {
+	public HashMap<UUID, VirtualStream> getVirtualStreams() {
 		return vstreams;
 	}
 	
-	public PlatformStream addVirtualstream(VirtualStream s) 
+	public PlatformStream addVirtualStream(VirtualStream s) 
 			throws 
 			DuplicateVstreamException, 
 			IncompatibleStreamException, 

@@ -78,7 +78,7 @@ public class StreamsUnitTests {
 		VirtualStream vs1 = new VirtualStream();
 		
 		try {
-				ps.addVirtualstream(vs1);
+				ps.addVirtualStream(vs1);
 				assertEquals(1, 0);
 		} catch (IncompatibleStreamException e) {
 			assertEquals(0, 0);

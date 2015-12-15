@@ -19,9 +19,11 @@ public class PlatformStreamStorageService {
 			service.getSession().execute(service.insertPstreamPropertiesStmt.bind(s.getID(),name, p));
 		}
 		
-		for(UUID id: s.getVstreams().keySet()) {
-			service.getSession().execute(service.insertPstreamVstreamsStmt.bind(s.getID(),id));
-		}
+		if(null != s.getVirtualStreams())
+			for(UUID id: s.getVirtualStreams().keySet()) 
+			{
+				service.getSession().execute(service.insertPstreamVstreamsStmt.bind(s.getID(),id));
+			}
 	}
 
 }
