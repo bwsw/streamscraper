@@ -21,6 +21,10 @@ public class StreamScraperMgmtService {
 	Cluster cluster;
 	Session session;
 	Properties props;
+	
+	public BoundStatement insertPstreamPropertiesStmt;
+	public BoundStatement insertPstreamVstreamsStmt;	
+	
 	BoundStatement insertPstreamStmt;
 	BoundStatement insertPstreamPropertyStmt;
 	BoundStatement selectStreamByPropertyStmt;
@@ -44,6 +48,10 @@ public class StreamScraperMgmtService {
 	public static final String PPROP_BACKLOG = "backlog";
 	public static final String PPROP_BANDWIDTH = "bandwidth";	
 	
+	public Session getSession() {
+		return session;
+	}
+	
 	public StreamScraperMgmtService() throws Exception {
 		props = new Properties();
 		FileInputStream in = new FileInputStream("config.properties");
@@ -64,6 +72,15 @@ public class StreamScraperMgmtService {
 		statement = session.prepare("INSERT INTO pstreams (stype, id) VALUES(?, ?)");
 		insertPstreamStmt = new BoundStatement(statement);		
 
+		//----------------------------------------------------------------------------------
+		statement = session.prepare("INSERT INTO pstream (id, key, value) VALUES(?, ?, ?)");
+		insertPstreamPropertiesStmt = new BoundStatement(statement);
+		//----------------------------------------------------------------------------------
+		statement = session.prepare("INSERT INTO pstream_vstream (pstreamid, vstreamid) VALUES(?, ?)");
+		insertPstreamVstreamsStmt = new BoundStatement(statement);
+
+		
+		//----------------------------------------------------------------------------------
 		statement = session.prepare("INSERT INTO pstreams_properties (pstype, key, value, stream_id) " + 
 									"VALUES(?, ?, ?, ?)");
 		insertPstreamPropertyStmt = new BoundStatement(statement);		
@@ -100,6 +117,14 @@ public class StreamScraperMgmtService {
 	public void initDb() 
 	{
 		finiDb();
+
+		session.execute("CREATE TABLE IF NOT EXISTS pstream (id UUID, key text, value text, " + 
+				" PRIMARY KEY (id, key))");
+
+		session.execute("CREATE TABLE IF NOT EXISTS pstream_vstream (pstreamid UUID, vstreamid UUID, " + 
+				" PRIMARY KEY (pstreamid, vstreamid))");
+		
+		
 		session.execute("CREATE TABLE IF NOT EXISTS pstreams (stype int, id uuid, PRIMARY KEY (stype, id))");
 		session.execute("CREATE TABLE IF NOT EXISTS pstreams_properties (pstype int, key text, value text, " + 
 						" stream_id uuid, PRIMARY KEY (pstype, key, value, stream_id))");
@@ -112,6 +137,9 @@ public class StreamScraperMgmtService {
 	}
 	
 	public void finiDb() {
+		session.execute("TRUNCATE pstream");		
+		session.execute("TRUNCATE pstream_vstream");
+		
 		session.execute("TRUNCATE streamrmap");
 		session.execute("TRUNCATE streammap");
 		session.execute("TRUNCATE pstreams_solid");

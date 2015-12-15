@@ -70,30 +70,37 @@ public class StreamsUnitTests {
 	}
 	
 	@Test
-	public void test003_vstreams() {
+	public void test003_vstreams() 
+			throws DuplicateVstreamException, 
+			IncompatibleStreamException, 
+			ImpossibleStreamException {
 		PlatformStream ps = new PlatformStream();
 		VirtualStream vs1 = new VirtualStream();
 		
 		try {
 				ps.addVirtualstream(vs1);
-		} catch (DuplicateVstreamException e) {
-				assertEquals(true, false);
+				assertEquals(1, 0);
+		} catch (IncompatibleStreamException e) {
+			assertEquals(0, 0);
 		}
-
-		//		
-//		try {
-//			ps.addVirtualstream(new VirtualStream());			
-//		} catch (DuplicateVstreamException e) {
-//			assertEquals(true, false);
-//		}
-
-//		try {
-//			ps.addVirtualstream(vs1);
-//			assertEquals(true, false);
-//		} catch (DuplicateVstreamException e) {
-//		}
-	
 	}
+
+	@Test
+	public void test004_factoryPVS()
+	{
+		VirtualStream vs = StreamFactory.getParallelVirtualStream(UUID.randomUUID(), 10, true);
+		assertEquals("10", vs.getProperty(PlatformStream.P_BANDWIDTH));
+		assertEquals("true", vs.getProperty(PlatformStream.P_EPHEMERAL));
+	}
+
+	@Test
+	public void test004_factoryPPS()
+	{
+		PlatformStream ps = StreamFactory.getParallelPlatformStream(UUID.randomUUID(), 10);
+		assertEquals("10", ps.getProperty(PlatformStream.P_BANDWIDTH));
+		assertEquals("true", ps.getProperty(PlatformStream.P_EPHEMERAL));
+	}
+
 	
 /*	@Test
 	public void test001() throws Exception {
