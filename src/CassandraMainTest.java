@@ -5,7 +5,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 import com.bwsw.streamscraper.system.StreamScraperMgmtService;
-import com.bwsw.streamscraper.tests.UnitTests;
+import com.bwsw.streamscraper.tests.StreamsUnitTests;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -13,7 +13,7 @@ import java.util.UUID;
 public class CassandraMainTest {
 		private static StreamScraperMgmtService m;
         public static void main(String[] args) {
-            Result result = JUnitCore.runClasses(UnitTests.class);
+            Result result = JUnitCore.runClasses(StreamsUnitTests.class);
             for (Failure failure : result.getFailures()) {
               System.out.println(failure.toString());
             }

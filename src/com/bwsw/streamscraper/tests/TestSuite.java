@@ -12,7 +12,7 @@ import com.bwsw.streamscraper.tests.StopOnFirstFailureSuite;
 */
 @RunWith(Suite.class)
 @SuiteClasses({
-com.bwsw.streamscraper.tests.UnitTests.class,
+com.bwsw.streamscraper.tests.StreamsUnitTests.class,
 })
 
 public class TestSuite {

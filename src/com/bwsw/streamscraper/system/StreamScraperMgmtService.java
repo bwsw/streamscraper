@@ -200,40 +200,54 @@ public class StreamScraperMgmtService {
 			}
 		} 
 		else if (vstype == VTYPE_EPHEMERAL) {
+			
 			long minArray[] = new long[suitable_pstreams.size()];
+			for (int i = 0 ; i < suitable_pstreams.size(); i++) minArray[i] = -1;
+			
 			// iterate over suitable pstreams to find one with minimal counter (less used)
 			int ctr = 0;
 			for (UUID u: suitable_pstreams) {
 				r = session.execute(selectPstreamSolidStateStmt.bind(u));
-				if(!r.all().isEmpty()) {
-					// we have found stream which already has solid vstream mapping
-					continue;
+				if(r.all().isEmpty()) {
+					r = session.execute(selectPstreamVstreamCntrsStmt.bind(u));
+					List<Row> data = r.all();
+					if (data.isEmpty()) {
+						// if counter is absent -> 0
+						minArray[ctr]= 0;
+					} else {
+						// if counter exists then get it
+						minArray[ctr] = data.get(0).getLong("vstream_ctr");
+						//System.out.print(new Long(data.get(0).getLong("vstream_ctr")));
+					}			
 				}
-				// get counter
-				r = session.execute(selectPstreamVstreamCntrsStmt.bind(u));
-				List<Row> data = r.all();
-				if (data.isEmpty()) {
-					// if counter is absent -> 0
-					minArray[ctr]= 0;
-				} else {
-					// if counter exists then get it
-					minArray[ctr] = data.get(0).getLong("vstream_ctr");
-					ctr++;
-					//System.out.print(new Long(data.get(0).getLong("vstream_ctr")));
-				}			
+				ctr ++;
 			}
-			// find minimal one
-			int min_idx = 0;
-			for (int i = 0; i < minArray.length;i++) {
-				//System.out.print(new Integer(i));
-				//System.out.print("/");
-				//System.out.println(new Long(minArray[i]));
-				if (minArray[min_idx] > minArray[i])
-					min_idx = i;
+			
+			// check if at least one pstream filled with counter
+			boolean found = false;
+			for(int i=0 ; i < minArray.length ; i++)
+			{
+				if (minArray[i] > - 1)
+				{
+					found = true;
+					break;
+				}
 			}
-			// assign pstream min load stream
-			//System.out.println(new Integer(min_idx));
-			pstream = suitable_pstreams.get(min_idx);
+			if (found) 
+			{
+				// none suitable streams found, create one
+				pstream = createGenericStream(vsdeployment_type, key, Integer.parseInt(value));
+			} 
+			else {
+				// find minimal one
+				int min_idx = 0;
+				for (int i = 0; i < minArray.length;i++) {
+					if (minArray[min_idx] > minArray[i])
+						min_idx = i;
+				}
+				// assign pstream min load stream
+				pstream = suitable_pstreams.get(min_idx);
+			}
 		} else {
 			throw new Exception("Unknown vstream deployment type");
 		}
