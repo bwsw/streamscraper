@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="/home/ivan/workspace/streamscraper/libs/samza-log4j-0.9.1.jar"/>
 	<classpathentry kind="lib" path="/home/ivan/workspace/streamscraper/libs/samza-yarn_2.10-0.9.1.jar"/>
 	<classpathentry kind="lib" path="/home/ivan/workspace/streamscraper/libs/jedis-2.7.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,34 +1,22 @@
+
+
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+
+import com.bwsw.streamscraper.system.StreamScraperMgmtService;
+import com.bwsw.streamscraper.tests.UnitTests;
+
 import java.util.ArrayList;
 import java.util.UUID;
-
-import bitworks.streamscraper.system.StreamScraperMgmtService;
 
 public class CassandraMainTest {
 		private static StreamScraperMgmtService m;
         public static void main(String[] args) {
-		try {
-			m = new StreamScraperMgmtService();
-//			System.err.println(m.createParallelPlatformStream(100));
-//			System.err.println(m.createParallelPlatformStream());
-//			System.err.println(m.createRecurrentPlatformStream(200));
-//			System.err.println(m.createRecurrentPlatformStream());
-//			ArrayList<UUID> l = m.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, "bandwidth", "10");
-//			for (UUID u: l) {
-//				System.err.println(u);
-//				
-//			}
-			m.createGenericVirtualStream(UUID.randomUUID().toString(), 
-											StreamScraperMgmtService.VTYPE_RECURRENT, 
-											StreamScraperMgmtService.VTYPE_EPHEMERAL, 
-											"history", 
-											"99", 
-											"");	
-			m.end();
-		}
-		catch(Exception e) {
-			System.err.println(e);
-			m.end();
-		};
+            Result result = JUnitCore.runClasses(UnitTests.class);
+            for (Failure failure : result.getFailures()) {
+              System.out.println(failure.toString());
+            }
 	}
 
 }
