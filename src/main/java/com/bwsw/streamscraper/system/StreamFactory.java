@@ -5,13 +5,13 @@ import java.util.UUID;
 public class StreamFactory {
 	public static PlatformStream getParallelPlatformStream(UUID id, int bandwidth) {
 		return (new PlatformStream(id))
-				.setProperty(PlatformStream.P_BANDWIDTH, (new Integer(bandwidth).toString()))
+				.setProperty(PlatformStream.P_BANDWIDTH, Integer.toString(bandwidth))
 				.setProperty(PlatformStream.P_PARALLEL, "true");
 	}
 	
 	public static PlatformStream getRecurrentPlatformStream(UUID id, int backlog) {
 		return (new PlatformStream(id))
-				.setProperty(PlatformStream.P_BACKLOG, (new Integer(backlog).toString()))				
+				.setProperty(PlatformStream.P_BACKLOG, Integer.toString(backlog))
 				.setProperty(PlatformStream.P_RECURRENT, "true");
 	} 
 

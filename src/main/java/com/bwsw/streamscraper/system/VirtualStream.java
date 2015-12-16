@@ -34,7 +34,7 @@ public class VirtualStream extends PlatformStream {
 	}
 
 	public static void addPolicyCheck(VirtualStream vs, PlatformStream ps) throws IncompatibleStreamException {
-		String excMessage = "";
+		String excMessage;
 		while (true) {
 			if (vs.getProperty(PlatformStream.P_BANDWIDTH) != ps.getProperty(PlatformStream.P_BANDWIDTH)) {
 				excMessage = "Vstream & Pstream P_BANDWIDTH mismatch.";
