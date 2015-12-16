@@ -1,22 +1,13 @@
 package com.bwsw.streamscraper.tests;
 
-import static org.junit.Assert.*;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import com.bwsw.streamscraper.system.*;
+import org.junit.*;
 import org.junit.runners.MethodSorters;
 
-import com.bwsw.streamscraper.system.*;
+import java.util.UUID;
 
-import org.junit.FixMethodOrder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -89,6 +80,7 @@ public class StreamsUnitTests {
 	public void test004_factoryPVS()
 	{
 		VirtualStream vs = StreamFactory.getParallelVirtualStream(UUID.randomUUID(), 10, true);
+		assertNotEquals(null, vs);
 		assertEquals("10", vs.getProperty(PlatformStream.P_BANDWIDTH));
 		assertEquals("true", vs.getProperty(PlatformStream.P_EPHEMERAL));
 	}
@@ -98,7 +90,7 @@ public class StreamsUnitTests {
 	{
 		PlatformStream ps = StreamFactory.getParallelPlatformStream(UUID.randomUUID(), 10);
 		assertEquals("10", ps.getProperty(PlatformStream.P_BANDWIDTH));
-		assertEquals("true", ps.getProperty(PlatformStream.P_EPHEMERAL));
+		assertEquals("true", ps.getProperty(PlatformStream.P_PARALLEL));
 	}
 
 	

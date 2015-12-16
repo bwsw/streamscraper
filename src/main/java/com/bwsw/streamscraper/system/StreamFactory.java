@@ -7,7 +7,7 @@ public class StreamFactory {
 		return (new PlatformStream(id))
 				.setProperty(PlatformStream.P_BANDWIDTH, (new Integer(bandwidth).toString()))
 				.setProperty(PlatformStream.P_PARALLEL, "true");
-	} 
+	}
 	
 	public static PlatformStream getRecurrentPlatformStream(UUID id, int backlog) {
 		return (new PlatformStream(id))

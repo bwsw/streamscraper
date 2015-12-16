@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <groupId>com.bwsw</groupId>
    <artifactId>streamscraper</artifactId>
@@ -11,6 +12,9 @@
       <!-- maven specific properties -->
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <samza.version>0.9.1</samza.version>
+       <streamscraper.cassandra.ip>127.0.0.1</streamscraper.cassandra.ip>
+       <streamscraper.streams.parallel.default_bandwidth>10</streamscraper.streams.parallel.default_bandwidth>
+       <streamscraper.streams.recurrent.default_backlog>100</streamscraper.streams.recurrent.default_backlog>
    </properties>
    <developers>
       <developer>
@@ -28,6 +32,34 @@
    </licenses>
    <build>
       <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <version>2.10</version>
+              <executions>
+                  <execution>
+                      <id>copy-dependencies</id>
+                      <phase>generate-resources</phase>
+                      <goals>
+                          <goal>copy-dependencies</goal>
+                      </goals>
+                      <configuration>
+                          <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                          <overWriteReleases>false</overWriteReleases>
+                          <overWriteSnapshots>false</overWriteSnapshots>
+                          <overWriteIfNewer>true</overWriteIfNewer>
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <version>2.10</version>
+              <configuration>
+                  <workingDirectory>${project.build.directory}/test-classes</workingDirectory>
+              </configuration>
+          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
@@ -37,6 +69,23 @@
                <target>${java.version}</target>
             </configuration>
          </plugin>
+          <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>properties-maven-plugin</artifactId>
+              <version>1.0.0</version>
+              <executions>
+                  <execution>
+                      <phase>generate-resources</phase>
+                      <goals>
+                          <goal>write-project-properties</goal>
+                      </goals>
+                      <configuration>
+                          <outputFile>${project.build.outputDirectory}/config.properties</outputFile>
+                          <outputFile>${project.build.directory}/test-classes/config.properties</outputFile>
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
          <!-- plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-shade-plugin</artifactId>
@@ -53,14 +102,14 @@
             </configuration>
         </plugin -->
       </plugins>
-      <resources>
-         <resource>
-            <directory>${basedir}/src/main/java</directory>
-            <includes>
-               <include>**/*.properties</include>
-            </includes>
-         </resource>
-      </resources>
+       <!-- resources>
+          <resource>
+             <directory>${basedir}/src/main/java</directory>
+             <includes>
+                <include>**/*.properties</include>
+             </includes>
+          </resource>
+       </resources -->
    </build>
    <dependencies>
       <dependency>
@@ -70,6 +119,11 @@
          <scope>test</scope>
       </dependency>
       <dependency>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+          <version>18.0</version>
+      </dependency>
+       <dependency>
          <groupId>org.apache.samza</groupId>
          <artifactId>samza-api</artifactId>
          <version>${samza.version}</version>
@@ -84,13 +138,13 @@
          <artifactId>samza-log4j</artifactId>
          <version>${samza.version}</version>
       </dependency>
-      <!-- dependency>
+       <dependency>
          <groupId>org.apache.samza</groupId>
          <artifactId>samza-shell</artifactId>
          <classifier>dist</classifier>
          <type>tgz</type>
          <version>${samza.version}</version>
-      </dependency -->
+       </dependency>
       <dependency>
          <groupId>org.apache.samza</groupId>
          <artifactId>samza-yarn_2.10</artifactId>

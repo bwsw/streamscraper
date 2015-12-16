@@ -1,11 +1,8 @@
 package com.bwsw.streamscraper.system;
 
-import java.util.UUID;
-
-
 import java.util.HashMap;
 import java.util.Set;
-import java.util.ArrayList;
+import java.util.UUID;
 
 public class PlatformStream {
 
@@ -25,9 +22,9 @@ public class PlatformStream {
 	public PlatformStream() {
 		// TODO Auto-generated constructor stub
 		psid = UUID.randomUUID();
-		properties = new HashMap<String, String>();
-		vstreams = new HashMap<UUID, VirtualStream>();
-		has_changes = true;
+        properties = new HashMap<>();
+        vstreams = new HashMap<>();
+        has_changes = true;
 	}
 
 	/**
@@ -36,20 +33,11 @@ public class PlatformStream {
 	 */
 	public PlatformStream(UUID id) {
 		this.psid = id;
-		has_changes = true;
+        properties = new HashMap<>();
+        vstreams = new HashMap<>();
+        has_changes = true;
 	}
 
-	/**
-	 * 
-	 * @param id - stream ID
-	 * 
-	 */
-	public PlatformStream setID(UUID id) {
-		this.psid = id;
-		has_changes = true;
-		return this;
-	}
-	
 	public PlatformStream setProperty(String name, String value) {
 		properties.put(name, value);
 		has_changes = true;
@@ -74,7 +62,16 @@ public class PlatformStream {
 	
 	public UUID getID() {
 		return psid;
-	}
+    }
+
+    /**
+     * @param id - stream ID
+     */
+    public PlatformStream setID(UUID id) {
+        this.psid = id;
+        has_changes = true;
+        return this;
+    }
 	
 	public HashMap<UUID, VirtualStream> getVirtualStreams() {
 		return vstreams;

@@ -1,22 +1,8 @@
 package com.bwsw.streamscraper.tests;
 
-import static org.junit.Assert.*;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import org.junit.runners.MethodSorters;
-
 import com.bwsw.streamscraper.system.*;
-
-import org.junit.FixMethodOrder;
+import org.junit.*;
+import org.junit.runners.MethodSorters;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -44,8 +30,8 @@ public class StreamsStorageUnitTests {
 	@After
 	public void tearDown() throws Exception {
 	}
-	
-	@Test
+
+	@Ignore
 	public void test001_saveLoadPlatformStream() 
 			throws 
 				DuplicateVstreamException, 
