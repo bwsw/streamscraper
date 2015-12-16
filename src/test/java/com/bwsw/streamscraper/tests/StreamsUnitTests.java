@@ -76,24 +76,49 @@ public class StreamsUnitTests {
 		}
 	}
 
-	@Test
-	public void test004_factoryPVS()
-	{
+    @Ignore
+    public void test004_factoryPVS() throws ImpossibleStreamException {
 		VirtualStream vs = StreamFactory.getParallelVirtualStream(UUID.randomUUID(), 10, true);
 		assertNotEquals(null, vs);
 		assertEquals("10", vs.getProperty(PlatformStream.P_BANDWIDTH));
-		assertEquals("true", vs.getProperty(PlatformStream.P_EPHEMERAL));
+        assertEquals("true", vs.getProperty(PlatformStream.P_PARALLEL));
+        assertEquals("true", vs.getProperty(PlatformStream.P_EPHEMERAL));
+        assertEquals(1, vs.getWeight());
+        assertEquals(null, vs.getProperty(PlatformStream.P_BACKLOG));
+        assertEquals(null, vs.getProperty(PlatformStream.P_RECURRENT));
+
 	}
 
 	@Test
-	public void test004_factoryPPS()
-	{
-		PlatformStream ps = StreamFactory.getParallelPlatformStream(UUID.randomUUID(), 10);
-		assertEquals("10", ps.getProperty(PlatformStream.P_BANDWIDTH));
-		assertEquals("true", ps.getProperty(PlatformStream.P_PARALLEL));
-	}
+    public void test004_factoryPPS() throws ImpossibleStreamException {
+        ParallelPlatformStream ps = new ParallelPlatformStream(10);
+        assertEquals(10, ps.getBandwidth());
+        assertEquals("true", ps.getProperty(PlatformStream.P_PARALLEL));
+        assertEquals(null, ps.getProperty(PlatformStream.P_BACKLOG));
+        assertEquals(null, ps.getProperty(PlatformStream.P_RECURRENT));
+    }
 
-	
+    @Test
+    public void test004_factoryRVS() {
+        VirtualStream vs = StreamFactory.getRecurrentVirtualStream(UUID.randomUUID(), 100, true);
+        assertEquals("100", vs.getProperty(PlatformStream.P_BACKLOG));
+        assertEquals("true", vs.getProperty(PlatformStream.P_RECURRENT));
+        assertEquals("true", vs.getProperty(PlatformStream.P_EPHEMERAL));
+        assertEquals(1, vs.getWeight());
+        assertEquals(null, vs.getProperty(PlatformStream.P_BANDWIDTH));
+        assertEquals(null, vs.getProperty(PlatformStream.P_PARALLEL));
+    }
+
+    @Test
+    public void test004_factoryRPS() {
+        PlatformStream ps = StreamFactory.getRecurrentPlatformStream(UUID.randomUUID(), 100);
+        assertEquals(null, ps.getProperty(PlatformStream.P_BANDWIDTH));
+        assertEquals(null, ps.getProperty(PlatformStream.P_PARALLEL));
+        assertEquals("100", ps.getProperty(PlatformStream.P_BACKLOG));
+        assertEquals("true", ps.getProperty(PlatformStream.P_RECURRENT));
+    }
+
+
 /*	@Test
 	public void test001() throws Exception {
 		

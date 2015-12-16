@@ -3,10 +3,8 @@ package com.bwsw.streamscraper.system;
 import java.util.UUID;
 
 public class StreamFactory {
-	public static PlatformStream getParallelPlatformStream(UUID id, int bandwidth) {
-		return (new PlatformStream(id))
-				.setProperty(PlatformStream.P_BANDWIDTH, Integer.toString(bandwidth))
-				.setProperty(PlatformStream.P_PARALLEL, "true");
+	public static PlatformStream getParallelPlatformStream(UUID id, int bandwidth) throws ImpossibleStreamException {
+		return new ParallelPlatformStream(id, bandwidth);
 	}
 	
 	public static PlatformStream getRecurrentPlatformStream(UUID id, int backlog) {
@@ -26,9 +24,9 @@ public class StreamFactory {
 		VirtualStream vs = new VirtualStream(getRecurrentPlatformStream(id, backlog));
 		setSolid(vs, ephemeral);
 		return vs;
-	} 
-	
-	public static VirtualStream getParallelVirtualStream(UUID id, int bandwidth, boolean ephemeral) {
+	}
+
+	public static VirtualStream getParallelVirtualStream(UUID id, int bandwidth, boolean ephemeral) throws ImpossibleStreamException {
 		VirtualStream vs = new VirtualStream(getParallelPlatformStream(id, bandwidth));
 		setSolid(vs, ephemeral);
 		return vs;

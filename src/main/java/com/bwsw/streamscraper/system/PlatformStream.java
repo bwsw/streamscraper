@@ -20,7 +20,6 @@ public class PlatformStream {
 	boolean has_changes;
 	
 	public PlatformStream() {
-		// TODO Auto-generated constructor stub
 		psid = UUID.randomUUID();
         properties = new HashMap<>();
         vstreams = new HashMap<>();
@@ -97,5 +96,5 @@ public class PlatformStream {
 	public VirtualStream getVirtualStream(UUID id) {
 		return vstreams.get(id);
 	}
-	
+
 }

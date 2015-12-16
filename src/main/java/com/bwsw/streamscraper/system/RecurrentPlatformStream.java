@@ -15,15 +15,19 @@ public class RecurrentPlatformStream extends PlatformStream {
 	 * 
 	 */
 	public RecurrentPlatformStream() {
-		// TODO Auto-generated constructor stub
-	}
+        super();
+    }
 
 	/**
 	 * @param id
 	 */
 	public RecurrentPlatformStream(UUID id) {
 		super(id);
-		// TODO Auto-generated constructor stub
 	}
+
+    public int getBacklog() throws ImpossibleStreamException {
+        return Integer.parseInt(getProperty(P_BANDWIDTH));
+    }
+
 
 }

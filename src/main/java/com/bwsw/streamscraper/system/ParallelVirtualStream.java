@@ -14,30 +14,10 @@ public class ParallelVirtualStream extends VirtualStream implements EphemeralStr
 	public static int DEF_BANDWIDTH = 10;
 	public static int DEF_BANDWIDTH_MAX = 100000;
 
-	/**
-	 * 
-	 */
-
-	private int getBandWidth() {
-		String pbw = StreamScraperMgmtService.getProperty("streamscraper.streams.parallel.default_bandwidth");
-		Integer ibw;
-		if(null == pbw)
-			ibw = new Integer(DEF_BANDWIDTH);
-		else
-		{
-			Integer res = Integer.parseInt(pbw);
-			if(res < 0 || res > DEF_BANDWIDTH_MAX)
-				ibw = new Integer(DEF_BANDWIDTH);
-			else
-				ibw = res;
-		}
-		return ibw;
-	}
-	
-	public ParallelVirtualStream() {
+	public ParallelVirtualStream() throws ImpossibleStreamException {
 		// TODO Auto-generated constructor stub
 		super();
-		VirtualStream vs = StreamFactory.getParallelVirtualStream(UUID.randomUUID(), getBandWidth() , false);
+		VirtualStream vs = StreamFactory.getParallelVirtualStream(UUID.randomUUID(), getBandWidth(), false);
 		this.setID(vs.getID());
 		this.properties = vs.properties;
 	}
@@ -45,11 +25,30 @@ public class ParallelVirtualStream extends VirtualStream implements EphemeralStr
 	/**
 	 * @param id
 	 */
-	public ParallelVirtualStream(UUID id) {
+	public ParallelVirtualStream(UUID id) throws ImpossibleStreamException {
 		super(id);
-		VirtualStream vs = StreamFactory.getParallelVirtualStream(id, getBandWidth() , false);
+		VirtualStream vs = StreamFactory.getParallelVirtualStream(id, getBandWidth(), false);
 		this.properties = vs.properties;
 		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 *
+	 */
+
+	private int getBandWidth() {
+		String pbw = StreamScraperMgmtService.getProperty("streamscraper.streams.parallel.default_bandwidth");
+		Integer ibw;
+		if (null == pbw)
+			ibw = new Integer(DEF_BANDWIDTH);
+		else {
+			Integer res = Integer.parseInt(pbw);
+			if (res < 0 || res > DEF_BANDWIDTH_MAX)
+				ibw = new Integer(DEF_BANDWIDTH);
+			else
+				ibw = res;
+		}
+		return ibw;
 	}
 	
 	public int getBacklog() {
