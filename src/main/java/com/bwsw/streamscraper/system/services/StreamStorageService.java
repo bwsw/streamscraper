@@ -1,5 +1,6 @@
 package com.bwsw.streamscraper.system.services;
 
+import com.bwsw.streamscraper.system.exceptions.IncompatibleStreamException;
 import com.bwsw.streamscraper.system.models.*;
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
@@ -7,14 +8,14 @@ import com.datastax.driver.core.Session;
 
 import java.util.UUID;
 
-public class StreamStorageService {
+public class StreamStorageService implements IStreamStorageService {
 
-    StreamScraperMgmtService service;
+    CassandraStreamManagementService service;
 
     BoundStatement insertPstreamPropertiesStmt;
     BoundStatement insertPstreamVstreamsStmt;
 
-    public StreamStorageService(StreamScraperMgmtService svc) {
+    public StreamStorageService(CassandraStreamManagementService svc) {
         service = svc;
         init();
     }
@@ -32,6 +33,12 @@ public class StreamStorageService {
         insertPstreamVstreamsStmt = new BoundStatement(statement);
     }
 
+    /*
+    *
+    *
+    *
+    *
+     */
     private void saveProperties(PlatformStream ps) {
         for (String name : ps.getPropertyList()) {
             String p = ps.getProperty(name);
@@ -39,7 +46,12 @@ public class StreamStorageService {
         }
     }
 
-    private void saveConnectedVirtualStreams(PlatformStream ps) {
+    /*
+    *
+    *
+    *
+    * */
+    private void saveConnectedVirtualStreams(PlatformStream ps) throws IncompatibleStreamException {
         if (null != ps.getVirtualStreams()) {
             for (UUID id : ps.getVirtualStreams().keySet()) {
                 if (ps.getVirtualStream(id).getHasChanges())
@@ -49,36 +61,81 @@ public class StreamStorageService {
         }
     }
 
-    public void platformStreamBasicSave(PlatformStream ps) {
+    /*
+    *
+    *
+    *
+    *
+    * */
+    public void platformStreamBasicSave(PlatformStream ps) throws IncompatibleStreamException {
         saveProperties(ps);
         saveConnectedVirtualStreams(ps);
     }
 
+    /*
+    *
+    *
+    *
+    *
+    * */
     private void virtualStreamBasicSave(VirtualStream vs) {
         saveProperties(vs);
     }
 
-    public void save(PlatformStream s) {
+    /*
+    *
+    *
+    *
+    * */
+    public void save(PlatformStream s) throws IncompatibleStreamException {
         if (s.getClass().equals(ParallelPlatformStream.class)) {
+            ParallelPlatformStream ps = (ParallelPlatformStream) s;
+            int bandwidth = ps.getBandwidth();
+            // additional actions here
+            // .
+            platformStreamBasicSave(s);
             s.setHasChanges(false);
             return;
         }
         if (s.getClass().equals(RecurrentPlatformStream.class)) {
+            RecurrentPlatformStream ps = (RecurrentPlatformStream) s;
+            int backlog = ps.getBacklogLength();
+            // additional actions here
+            // .
+            platformStreamBasicSave(s);
             s.setHasChanges(false);
             return;
         }
+        throw new IncompatibleStreamException("Unknown Pstream is requested to save");
     }
 
-    public void save(VirtualStream s) {
+    /*
+    *
+    *
+    *
+    * */
+    public void save(VirtualStream s) throws IncompatibleStreamException {
+        // TODO: check if platform stream exists and saved
+        // TODO: raise BadPlatformStream exception
+
         if (s.getClass().equals(ParallelVirtualStream.class)) {
+            ParallelVirtualStream vs = (ParallelVirtualStream) s;
+            String name = vs.getName();
+            // additional actions here
+            // .
             virtualStreamBasicSave(s);
             s.setHasChanges(false);
             return;
         }
         if (s.getClass().equals(RecurrentVirtualStream.class)) {
+            RecurrentVirtualStream vs = (RecurrentVirtualStream) s;
+            String name = vs.getName();
+            // additional actions here
+            // .
             virtualStreamBasicSave(s);
             s.setHasChanges(false);
             return;
         }
+        throw new IncompatibleStreamException("Unknown Vstream is requested to save");
     }
 }

@@ -14,7 +14,7 @@ import java.util.UUID;
 //import com.datastax.driver.core;
 
 
-public class StreamScraperMgmtService {
+public class CassandraStreamManagementService {
 
 	public static final int PSTYPE_RECURRENT = 1;
 	public static final int PSTYPE_PARALLEL = 2;
@@ -39,8 +39,8 @@ public class StreamScraperMgmtService {
 	BoundStatement insertReverseVstreamMappingStmt;
 	BoundStatement insertPstreamSolidStateStmt;
 	BoundStatement selectPstreamSolidStateStmt;
-	
-	public StreamScraperMgmtService() throws Exception {
+
+	public CassandraStreamManagementService() throws Exception {
 		props = new Properties();
 		FileInputStream in = new FileInputStream("config.properties");
 		props.load(in);

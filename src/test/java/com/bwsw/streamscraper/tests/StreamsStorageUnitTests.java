@@ -3,7 +3,7 @@ package com.bwsw.streamscraper.tests;
 import com.bwsw.streamscraper.system.exceptions.DuplicateVstreamException;
 import com.bwsw.streamscraper.system.exceptions.ImpossibleStreamException;
 import com.bwsw.streamscraper.system.exceptions.IncompatibleStreamException;
-import com.bwsw.streamscraper.system.services.StreamScraperMgmtService;
+import com.bwsw.streamscraper.system.services.CassandraStreamManagementService;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
@@ -11,11 +11,11 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class StreamsStorageUnitTests {
 
-	public static StreamScraperMgmtService svc;
+	public static CassandraStreamManagementService svc;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		svc = new StreamScraperMgmtService();
+		svc = new CassandraStreamManagementService();
 		svc.initDb();
 		svc.begin();
 	}

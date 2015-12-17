@@ -17,23 +17,16 @@
  * under the License.
  */
 
-package com.bwsw.streamscraper.task;
+package com.bwsw.streamscraper.system.task;
 
 import org.apache.samza.config.Config;
-import org.apache.samza.storage.kv.KeyValueStore;
 import org.apache.samza.system.IncomingMessageEnvelope;
-import org.apache.samza.system.OutgoingMessageEnvelope;
-import org.apache.samza.system.SystemStream;
-import org.apache.samza.task.InitableTask;
-import org.apache.samza.task.MessageCollector;
-import org.apache.samza.task.StreamTask;
-import org.apache.samza.task.TaskContext;
-import org.apache.samza.task.TaskCoordinator;
-import org.apache.samza.task.WindowableTask;
+import org.apache.samza.task.*;
 import redis.clients.jedis.Jedis;
 
 
-public class StreamScraperTask implements StreamTask, InitableTask, WindowableTask {
+public class StreamScraperTask
+        implements StreamTask, InitableTask, WindowableTask {
   private Jedis jedis;
 
   public void init(Config config, TaskContext context) {

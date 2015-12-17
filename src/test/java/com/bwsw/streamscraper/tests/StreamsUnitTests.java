@@ -4,7 +4,7 @@ import com.bwsw.streamscraper.system.exceptions.DuplicateVstreamException;
 import com.bwsw.streamscraper.system.exceptions.ImpossibleStreamException;
 import com.bwsw.streamscraper.system.exceptions.IncompatibleStreamException;
 import com.bwsw.streamscraper.system.models.*;
-import com.bwsw.streamscraper.system.services.StreamScraperMgmtService;
+import com.bwsw.streamscraper.system.services.CassandraStreamManagementService;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
@@ -16,14 +16,14 @@ import static org.junit.Assert.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class StreamsUnitTests {
 
-	public static StreamScraperMgmtService svc;
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-		svc = new StreamScraperMgmtService();
-		svc.initDb();
-		svc.begin();
-	}
+    public static CassandraStreamManagementService svc;
+
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        svc = new CassandraStreamManagementService();
+        svc.initDb();
+        svc.begin();
+    }
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {

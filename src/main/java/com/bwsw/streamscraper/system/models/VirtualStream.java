@@ -12,24 +12,24 @@ public class VirtualStream extends PlatformStream {
 	PlatformStream assignedStream;
 	// defines weight of virtual vstream.
 	// used to balance vstreams across pstreams.
-	int weight;
-	String name;
 
-	public VirtualStream(String name, int weight) {
-		super();
-		assignedStream = null;
-		this.weight = weight;
-		this.name = name;
-		setHasChanges(true);
-	}
+    public VirtualStream(String name, int weight)
+            throws ImpossibleStreamException {
+        super();
+        setName(name);
+        setWeight(weight);
+        assignedStream = null;
+        setHasChanges(true);
+    }
 
-	public VirtualStream(UUID id, String name, int weight) {
-		super(id);
-		this.assignedStream = null;
-		this.weight = weight;
-		this.name = name;
-		setHasChanges(true);
-	}
+    public VirtualStream(UUID id, String name, int weight)
+            throws ImpossibleStreamException {
+        super(id);
+        setName(name);
+        setWeight(weight);
+        this.assignedStream = null;
+        setHasChanges(true);
+    }
 
 
 	public static void addPolicyCheck(VirtualStream vs, PlatformStream ps) throws IncompatibleStreamException {
@@ -127,14 +127,14 @@ public class VirtualStream extends PlatformStream {
 	}
 
 	public int getWeight() {
-		return weight;
-	}
+        return Integer.parseInt(getProperty(P_WEIGHT));
+    }
 
 	private void setWeight(int weight) throws ImpossibleStreamException {
 		if (weight <= 0)
 			throw new ImpossibleStreamException("Vstream weight is set to negative value. Should be greater than 0.");
-		this.weight = weight;
-	}
+        setProperty(P_WEIGHT, new Integer(weight).toString());
+    }
 
 	public PlatformStream getAssignedStream() {
 		return assignedStream;
@@ -156,6 +156,13 @@ public class VirtualStream extends PlatformStream {
 	}
 
 	public String getName() {
-		return name;
-	}
+        return getProperty(P_NAME);
+    }
+
+    private void setName(String name)
+            throws ImpossibleStreamException {
+        if (new String("").equals(name))
+            throw new ImpossibleStreamException("Empty Vstream name is not allowd");
+        setProperty(P_NAME, name);
+    }
 }

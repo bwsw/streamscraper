@@ -16,6 +16,8 @@ public class PlatformStream {
 	public static String P_BACKLOG 		= "backlog";
 	public static String P_PARALLEL 	= "parallel";
 	public static String P_RECURRENT 	= "recurrent";
+	public static String P_NAME = "name";
+	public static String P_WEIGHT = "weight";
 	
 	UUID psid;
 	HashMap<String, String> properties;
