@@ -6,8 +6,7 @@ import org.junit.runners.MethodSorters;
 
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -65,32 +64,11 @@ public class StreamsUnitTests {
 			throws DuplicateVstreamException, 
 			IncompatibleStreamException, 
 			ImpossibleStreamException {
-		PlatformStream ps = new PlatformStream();
-        VirtualStream vs1 = new VirtualStream("test", 10);
-
-        try {
-				ps.addVirtualStream(vs1);
-				assertEquals(1, 0);
-		} catch (IncompatibleStreamException e) {
-			assertEquals(0, 0);
-		}
 	}
 
-    @Ignore
-    public void test004_factoryPVS() throws ImpossibleStreamException {
-/*		VirtualStream vs = StreamFactory.getParallelVirtualStream(UUID.randomUUID(), 10, true);
-        assertNotEquals(null, vs);
-		assertEquals("10", vs.getProperty(PlatformStream.P_BANDWIDTH));
-        assertEquals("true", vs.getProperty(PlatformStream.P_PARALLEL));
-        assertEquals("true", vs.getProperty(PlatformStream.P_EPHEMERAL));
-        assertEquals(1, vs.getWeight());
-        assertEquals(null, vs.getProperty(PlatformStream.P_BACKLOG));
-        assertEquals(null, vs.getProperty(PlatformStream.P_RECURRENT));
-*/
-    }
 
 	@Test
-    public void test004_factoryPPS() throws ImpossibleStreamException {
+    public void test004_PPS() throws ImpossibleStreamException {
         ParallelPlatformStream ps = new ParallelPlatformStream(10);
         assertEquals(10, ps.getBandwidth());
         assertEquals("true", ps.getProperty(PlatformStream.P_PARALLEL));
@@ -114,17 +92,22 @@ public class StreamsUnitTests {
     }
 
     @Test
-    public void test004_factoryRVS() throws ImpossibleStreamException {
-        ParallelVirtualStream vs;
+    public void test005_PVS() throws ImpossibleStreamException {
+        ParallelVirtualStream vs = new ParallelVirtualStream("test", 1, 10, true);
+        assertNotNull(vs);
+        assertEquals("test", vs.getName());
+        assertEquals(1, vs.getWeight());
+        assertEquals(10, vs.getBandwidth());
+        assertEquals(true, vs.isEphemeral());
+        assertEquals("true", vs.getProperty(PlatformStream.P_PARALLEL));
     }
 
     @Test
-    public void test004_factoryRPS() throws ImpossibleStreamException {
+    public void test006_RPS() throws ImpossibleStreamException {
         RecurrentPlatformStream ps = new RecurrentPlatformStream(UUID.randomUUID(), 100);
         assertEquals(100, ps.getBacklogLength());
         assertEquals(null, ps.getProperty(PlatformStream.P_BANDWIDTH));
         assertEquals(null, ps.getProperty(PlatformStream.P_PARALLEL));
-        assertEquals("100", ps.getProperty(PlatformStream.P_BACKLOG));
         assertEquals("true", ps.getProperty(PlatformStream.P_RECURRENT));
 
         try {
@@ -136,5 +119,132 @@ public class StreamsUnitTests {
 
     }
 
+    @Test
+    public void test007_RVS() throws ImpossibleStreamException {
+        RecurrentVirtualStream vs = new RecurrentVirtualStream("test", 1, 10, true);
+        assertNotNull(vs);
+        assertEquals("test", vs.getName());
+        assertEquals(1, vs.getWeight());
+        assertEquals(10, vs.getBacklogLength());
+        assertEquals(true, vs.isEphemeral());
+        assertEquals(null, vs.getProperty(PlatformStream.P_BANDWIDTH));
+        assertEquals(null, vs.getProperty(PlatformStream.P_PARALLEL));
+        assertEquals("true", vs.getProperty(PlatformStream.P_RECURRENT));
+    }
+
+    @Test
+    public void test008_StreamAttach1()
+            throws ImpossibleStreamException,
+            DuplicateVstreamException,
+            IncompatibleStreamException {
+        ParallelPlatformStream ps = new ParallelPlatformStream(10);
+        ParallelVirtualStream vs = new ParallelVirtualStream("test", 1, 10, true);
+
+        vs.setHasChanges(false);
+        ps.setHasChanges(false);
+
+        try {
+            ps.addVirtualStream(vs);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void test009_StreamAttach2()
+            throws ImpossibleStreamException,
+            DuplicateVstreamException,
+            IncompatibleStreamException {
+        ParallelPlatformStream ps = new ParallelPlatformStream(10);
+        ParallelVirtualStream vs = new ParallelVirtualStream("test", 1, 20, true);
+
+        vs.setHasChanges(false);
+        ps.setHasChanges(false);
+
+        try {
+            ps.addVirtualStream(vs);
+            assertTrue(false);
+        } catch (IncompatibleStreamException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    public void test010_StreamAttach3()
+            throws ImpossibleStreamException,
+            DuplicateVstreamException,
+            IncompatibleStreamException {
+        ParallelPlatformStream ps = new ParallelPlatformStream(10);
+        RecurrentVirtualStream vs = new RecurrentVirtualStream("test", 1, 100, true);
+
+        vs.setHasChanges(false);
+        ps.setHasChanges(false);
+
+        try {
+            ps.addVirtualStream(vs);
+            assertTrue(false);
+        } catch (IncompatibleStreamException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    public void test011_StreamAttach4()
+            throws ImpossibleStreamException,
+            DuplicateVstreamException,
+            IncompatibleStreamException {
+        RecurrentPlatformStream ps = new RecurrentPlatformStream(100);
+        RecurrentVirtualStream vs = new RecurrentVirtualStream("test", 1, 100, true);
+
+        vs.setHasChanges(false);
+        ps.setHasChanges(false);
+
+        try {
+            ps.addVirtualStream(vs);
+            assertTrue(true);
+        } catch (IncompatibleStreamException e) {
+            System.err.println(e.getMessage());
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void test012_StreamAttach5()
+            throws ImpossibleStreamException,
+            DuplicateVstreamException,
+            IncompatibleStreamException {
+        RecurrentPlatformStream ps = new RecurrentPlatformStream(100);
+        RecurrentVirtualStream vs = new RecurrentVirtualStream("test", 1, 200, true);
+
+        vs.setHasChanges(false);
+        ps.setHasChanges(false);
+
+        try {
+            ps.addVirtualStream(vs);
+            assertTrue(false);
+        } catch (IncompatibleStreamException e) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    public void test013_StreamAttach6()
+            throws ImpossibleStreamException,
+            DuplicateVstreamException,
+            IncompatibleStreamException {
+        RecurrentPlatformStream ps = new RecurrentPlatformStream(100);
+        ParallelVirtualStream vs = new ParallelVirtualStream("test", 1, 200, true);
+
+        vs.setHasChanges(false);
+        ps.setHasChanges(false);
+
+        try {
+            ps.addVirtualStream(vs);
+            assertTrue(false);
+        } catch (IncompatibleStreamException e) {
+            assertTrue(true);
+        }
+    }
 
 }

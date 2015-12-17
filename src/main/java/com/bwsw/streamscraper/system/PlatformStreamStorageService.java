@@ -2,13 +2,10 @@ package com.bwsw.streamscraper.system;
 
 import java.util.UUID;
 
-import javax.swing.plaf.basic.BasicScrollPaneUI.VSBChangeListener;
-
 public class PlatformStreamStorageService {
 	StreamScraperMgmtService service;
 	
 	public PlatformStreamStorageService(StreamScraperMgmtService svc) {
-		// TODO Auto-generated constructor stub
 		service = svc;
 	}
 	

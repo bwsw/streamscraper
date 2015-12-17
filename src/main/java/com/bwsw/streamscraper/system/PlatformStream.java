@@ -16,7 +16,6 @@ public class PlatformStream {
 	UUID psid;
 	HashMap<String, String> properties;
 	HashMap<UUID, VirtualStream> vstreams;
-	
 	boolean has_changes;
 	
 	public PlatformStream() {

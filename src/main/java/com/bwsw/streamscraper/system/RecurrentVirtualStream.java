@@ -8,10 +8,11 @@ public class RecurrentVirtualStream
 
 	public RecurrentVirtualStream(String name, int weight, int backlog, boolean ephemeral) throws ImpossibleStreamException {
 		super(name, weight);
-		if (backlog < 2)
-			throw new ImpossibleStreamException("Parallel Vstream bandwidth should be greater than 1");
+		if (backlog < 0)
+			throw new ImpossibleStreamException("Recurrent Vstream backlog should be 0 or greater");
 		setBacklogLength(backlog);
 		setEphemeral(ephemeral);
+		setProperty(P_RECURRENT, "true");
 	}
 
 	/**
@@ -19,10 +20,11 @@ public class RecurrentVirtualStream
 	 */
 	public RecurrentVirtualStream(UUID id, String name, int weight, int backlog, boolean ephemeral) throws ImpossibleStreamException {
 		super(id, name, weight);
-		if (backlog < 2)
+		if (backlog < 0)
 			throw new ImpossibleStreamException("Recurrent Vstream backlog should be 0 or greater");
 		setBacklogLength(backlog);
 		setEphemeral(ephemeral);
+		setProperty(P_RECURRENT, "true");
 	}
 
 	public int getBacklogLength() {
@@ -36,14 +38,12 @@ public class RecurrentVirtualStream
 	}
 
 	@Override
-	public boolean getEphemeral() {
-		// TODO Auto-generated method stub
+	public boolean isEphemeral() {
 		String ep = getProperty(P_EPHEMERAL);
 		return ep == "true" ? true : false;
 	}
 
 	private void setEphemeral(boolean ephemeral) {
-		// TODO Auto-generated method stub
 		setProperty(P_EPHEMERAL, "true");
 	}
 

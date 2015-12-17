@@ -17,6 +17,7 @@ public class ParallelVirtualStream extends VirtualStream implements IEphemeralSt
             throw new ImpossibleStreamException("Parallel Vstream bandwidth should be greater than 1");
         setBandwidth(bandwidth);
         setEphemeral(ephemeral);
+        setProperty(P_PARALLEL, "true");
     }
 
 	/**
@@ -28,6 +29,7 @@ public class ParallelVirtualStream extends VirtualStream implements IEphemeralSt
             throw new ImpossibleStreamException("Parallel Vstream bandwidth should be greater than 1");
         setBandwidth(bandwidth);
         setEphemeral(ephemeral);
+        setProperty(P_PARALLEL, "true");
     }
 
     public int getBandwidth() {
@@ -42,14 +44,12 @@ public class ParallelVirtualStream extends VirtualStream implements IEphemeralSt
 
 
     @Override
-	public boolean getEphemeral() {
-		// TODO Auto-generated method stub
-		String ep = getProperty(P_EPHEMERAL);
+    public boolean isEphemeral() {
+        String ep = getProperty(P_EPHEMERAL);
 		return ep == "true" ? true : false;
 	}
 
     private void setEphemeral(boolean ephemeral) {
-        // TODO Auto-generated method stub
         setProperty(P_EPHEMERAL, "true");
     }
 
