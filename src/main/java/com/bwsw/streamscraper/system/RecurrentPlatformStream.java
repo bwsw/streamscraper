@@ -43,4 +43,14 @@ public class RecurrentPlatformStream extends PlatformStream {
         setProperty(P_BACKLOG, new Integer(backlog).toString());
     }
 
+    @Override
+    public PlatformStream addVirtualStream(VirtualStream s)
+            throws IncompatibleStreamException, DuplicateVstreamException, ImpossibleStreamException {
+        if (!s.getClass().equals(RecurrentVirtualStream.class))
+            throw new IncompatibleStreamException("Pstream & Vstream should be both recurrent.");
+        super.addVirtualStream(s);
+        return this;
+    }
+
+
 }

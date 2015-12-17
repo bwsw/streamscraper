@@ -43,4 +43,13 @@ public class ParallelPlatformStream extends PlatformStream implements IParallelS
         setProperty(P_BANDWIDTH, new Integer(bandwidth).toString());
     }
 
+    @Override
+    public PlatformStream addVirtualStream(VirtualStream s)
+            throws IncompatibleStreamException, DuplicateVstreamException, ImpossibleStreamException {
+        if (!s.getClass().equals(ParallelVirtualStream.class))
+            throw new IncompatibleStreamException("Pstream & Vstream should be both parallel.");
+        super.addVirtualStream(s);
+        return this;
+    }
+
 }
