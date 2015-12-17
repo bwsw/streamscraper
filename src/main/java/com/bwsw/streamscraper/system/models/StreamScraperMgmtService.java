@@ -1,30 +1,33 @@
-package com.bwsw.streamscraper.system;
+package com.bwsw.streamscraper.system.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.Properties;
+import com.datastax.driver.core.*;
+
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
-import java.util.Collections;
-
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
 
 //import com.datastax.driver.core;
 //import com.datastax.driver.core;
-import com.datastax.driver.core.*;
-import com.datastax.driver.core.querybuilder.QueryBuilder;
 
 
 public class StreamScraperMgmtService {
 
+	public static final int PSTYPE_RECURRENT = 1;
+	public static final int PSTYPE_PARALLEL = 2;
+	public static final int VTYPE_EPHEMERAL = 1;
+	public static final int VTYPE_SOLID = 2;
+	public static final int VTYPE_PARALLEL = PSTYPE_PARALLEL;
+	public static final int VTYPE_RECURRENT = PSTYPE_RECURRENT;
+	public static final String PPROP_BACKLOG = "backlog";
+	public static final String PPROP_BANDWIDTH = "bandwidth";
+	static Properties props;
+	public BoundStatement insertPstreamPropertiesStmt;
+	public BoundStatement insertPstreamVstreamsStmt;
 	Cluster cluster;
 	Session session;
-	static Properties props;
-	
-	public BoundStatement insertPstreamPropertiesStmt;
-	public BoundStatement insertPstreamVstreamsStmt;	
-	
 	BoundStatement insertPstreamStmt;
 	BoundStatement insertPstreamPropertyStmt;
 	BoundStatement selectStreamByPropertyStmt;
@@ -36,38 +39,26 @@ public class StreamScraperMgmtService {
 	BoundStatement insertPstreamSolidStateStmt;
 	BoundStatement selectPstreamSolidStateStmt;
 	
-	public static final int PSTYPE_RECURRENT = 1;
-	public static final int PSTYPE_PARALLEL = 2;
-
-	public static final int VTYPE_EPHEMERAL = 1;
-	public static final int VTYPE_SOLID = 2;
-	
-	public static final int VTYPE_PARALLEL = PSTYPE_PARALLEL;
-	public static final int VTYPE_RECURRENT = PSTYPE_RECURRENT;
-	
-	public static final String PPROP_BACKLOG = "backlog";
-	public static final String PPROP_BANDWIDTH = "bandwidth";	
-	
-	public Session getSession() {
-		return session;
-	}
-	
-	public static String getProperty(String pname) {
-		return props.getProperty(pname);
-	}
-	
 	public StreamScraperMgmtService() throws Exception {
 		props = new Properties();
 		FileInputStream in = new FileInputStream("config.properties");
 		props.load(in);
-		in.close();	
+		in.close();
 
 		String cassandra_ip = props.getProperty("streamscraper.cassandra.ip");
 		if (cassandra_ip == null)
-			throw  new Exception("Failed to find 'streamscraper.cassandra.ip' in properties file.");		
-		
+			throw new Exception("Failed to find 'streamscraper.cassandra.ip' in properties file.");
+
 		cluster = Cluster.builder().addContactPoint(cassandra_ip).build();
-		session = cluster.connect("streamscraper");	
+		session = cluster.connect("streamscraper");
+	}
+
+	public static String getProperty(String pname) {
+		return props.getProperty(pname);
+	}
+
+	public Session getSession() {
+		return session;
 	}
 
 	public void begin() {

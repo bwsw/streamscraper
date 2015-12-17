@@ -1,9 +1,9 @@
 package com.bwsw.streamscraper.tests;
 
-import com.bwsw.streamscraper.system.DuplicateVstreamException;
-import com.bwsw.streamscraper.system.ImpossibleStreamException;
-import com.bwsw.streamscraper.system.IncompatibleStreamException;
-import com.bwsw.streamscraper.system.StreamScraperMgmtService;
+import com.bwsw.streamscraper.system.models.DuplicateVstreamException;
+import com.bwsw.streamscraper.system.models.ImpossibleStreamException;
+import com.bwsw.streamscraper.system.models.IncompatibleStreamException;
+import com.bwsw.streamscraper.system.models.StreamScraperMgmtService;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 

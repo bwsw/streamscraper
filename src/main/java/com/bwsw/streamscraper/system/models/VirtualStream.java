@@ -1,4 +1,4 @@
-package com.bwsw.streamscraper.system;
+package com.bwsw.streamscraper.system.models;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -32,16 +32,16 @@ public class VirtualStream extends PlatformStream {
 	public static void addPolicyCheck(VirtualStream vs, PlatformStream ps) throws IncompatibleStreamException {
 		try {
 
-            if (!Objects.equals(vs.getProperty(PlatformStream.P_BANDWIDTH),
-                    ps.getProperty(PlatformStream.P_BANDWIDTH)))
-                throw new Exception("Vstream & Pstream P_BANDWIDTH mismatch.");
+			if (!Objects.equals(vs.getProperty(P_BANDWIDTH),
+					ps.getProperty(P_BANDWIDTH)))
+				throw new Exception("Vstream & Pstream P_BANDWIDTH mismatch.");
 
 
-            if (!Objects.equals(vs.getProperty(PlatformStream.P_BACKLOG),
-                    ps.getProperty(PlatformStream.P_BACKLOG)))
-                throw new Exception("Vstream & Pstream P_BACKLOG mismatch.");
+			if (!Objects.equals(vs.getProperty(P_BACKLOG),
+					ps.getProperty(P_BACKLOG)))
+				throw new Exception("Vstream & Pstream P_BACKLOG mismatch.");
 
-			if (null != ps.getProperty(PlatformStream.P_SOLID))
+			if (null != ps.getProperty(P_SOLID))
 				throw new Exception("Pstream P_SOLID is set. Shouldn't be set.");
 
 			/*if (!Objects.equals(vs.getProperty(PlatformStream.P_EPHEMERAL),
@@ -103,13 +103,13 @@ public class VirtualStream extends PlatformStream {
 	}
 
 	public static void updatePolicy(VirtualStream vs, PlatformStream ps) throws ImpossibleStreamException {
-		String solid = vs.getProperty(PlatformStream.P_SOLID);
+		String solid = vs.getProperty(P_SOLID);
 		if (null != solid)
-			ps.setProperty(PlatformStream.P_SOLID, solid);
+			ps.setProperty(P_SOLID, solid);
 
-		String ephemeral = vs.getProperty(PlatformStream.P_EPHEMERAL);
+		String ephemeral = vs.getProperty(P_EPHEMERAL);
 		if (null != ephemeral)
-			ps.setProperty(PlatformStream.P_EPHEMERAL, ephemeral);
+			ps.setProperty(P_EPHEMERAL, ephemeral);
 
 		ps.setHasChanges(true);
 		vs.assignStream(ps);

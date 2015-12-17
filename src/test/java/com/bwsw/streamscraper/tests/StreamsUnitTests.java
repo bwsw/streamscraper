@@ -1,6 +1,6 @@
 package com.bwsw.streamscraper.tests;
 
-import com.bwsw.streamscraper.system.*;
+import com.bwsw.streamscraper.system.models.*;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
@@ -60,11 +60,11 @@ public class StreamsUnitTests {
 	}
 	
 	@Test
-	public void test003_vstreams() 
-			throws DuplicateVstreamException, 
-			IncompatibleStreamException, 
-			ImpossibleStreamException {
-	}
+	public void test003_vstreams()
+            throws DuplicateVstreamException,
+            IncompatibleStreamException,
+            ImpossibleStreamException {
+    }
 
 
 	@Test

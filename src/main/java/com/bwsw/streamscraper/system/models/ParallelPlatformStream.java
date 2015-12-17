@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.bwsw.streamscraper.system;
+package com.bwsw.streamscraper.system.models;
 
 import java.util.UUID;
 

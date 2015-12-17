@@ -1,4 +1,4 @@
-package com.bwsw.streamscraper.system;
+package com.bwsw.streamscraper.system.models;
 
 /**
  * Created by ivan on 17.12.15.

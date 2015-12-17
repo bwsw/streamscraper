@@ -1,4 +1,7 @@
-package com.bwsw.streamscraper.system;
+package com.bwsw.streamscraper.system.services;
+
+import com.bwsw.streamscraper.system.models.PlatformStream;
+import com.bwsw.streamscraper.system.models.StreamScraperMgmtService;
 
 import java.util.UUID;
 
