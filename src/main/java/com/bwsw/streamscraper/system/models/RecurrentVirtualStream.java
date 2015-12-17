@@ -1,5 +1,7 @@
 package com.bwsw.streamscraper.system.models;
 
+import com.bwsw.streamscraper.system.exceptions.ImpossibleStreamException;
+
 import java.util.UUID;
 
 public class RecurrentVirtualStream

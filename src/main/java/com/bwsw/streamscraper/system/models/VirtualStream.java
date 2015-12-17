@@ -1,5 +1,8 @@
 package com.bwsw.streamscraper.system.models;
 
+import com.bwsw.streamscraper.system.exceptions.ImpossibleStreamException;
+import com.bwsw.streamscraper.system.exceptions.IncompatibleStreamException;
+
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;

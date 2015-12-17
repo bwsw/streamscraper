@@ -1,4 +1,4 @@
-package com.bwsw.streamscraper.system.models;
+package com.bwsw.streamscraper.system.exceptions;
 
 public class DuplicateVstreamException extends Exception {
 

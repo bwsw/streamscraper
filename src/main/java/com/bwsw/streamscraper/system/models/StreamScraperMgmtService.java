@@ -1,5 +1,6 @@
 package com.bwsw.streamscraper.system.models;
 
+import com.bwsw.streamscraper.system.exceptions.DuplicateVstreamException;
 import com.datastax.driver.core.*;
 
 import java.io.FileInputStream;

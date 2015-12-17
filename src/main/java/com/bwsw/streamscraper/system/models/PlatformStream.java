@@ -1,5 +1,9 @@
 package com.bwsw.streamscraper.system.models;
 
+import com.bwsw.streamscraper.system.exceptions.DuplicateVstreamException;
+import com.bwsw.streamscraper.system.exceptions.ImpossibleStreamException;
+import com.bwsw.streamscraper.system.exceptions.IncompatibleStreamException;
+
 import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
@@ -74,12 +78,12 @@ public class PlatformStream {
 	public HashMap<UUID, VirtualStream> getVirtualStreams() {
 		return vstreams;
 	}
-	
-	public PlatformStream addVirtualStream(VirtualStream s) 
-			throws 
-			DuplicateVstreamException, 
-			IncompatibleStreamException, 
-			ImpossibleStreamException 
+
+	public PlatformStream addVirtualStream(VirtualStream s)
+			throws
+			DuplicateVstreamException,
+			IncompatibleStreamException,
+			ImpossibleStreamException
 	{
 		if (vstreams.containsKey(s.getID()))
 			throw new DuplicateVstreamException("Virtual stream `" + s.getID().toString() + 
