@@ -3,7 +3,7 @@ package com.bwsw.streamscraper.tests;
 import com.bwsw.streamscraper.system.exceptions.DuplicateVstreamException;
 import com.bwsw.streamscraper.system.exceptions.ImpossibleStreamException;
 import com.bwsw.streamscraper.system.exceptions.IncompatibleStreamException;
-import com.bwsw.streamscraper.system.models.StreamScraperMgmtService;
+import com.bwsw.streamscraper.system.services.StreamScraperMgmtService;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
@@ -40,7 +40,7 @@ public class StreamsStorageUnitTests {
 				DuplicateVstreamException, 
 				IncompatibleStreamException, 
 				ImpossibleStreamException {
-/*		PlatformStreamStorageService ss = new PlatformStreamStorageService(svc);
+/*		StreamStorageService ss = new StreamStorageService(svc);
 		PlatformStream ps = new PlatformStream();
 		ps
 			.setProperty("property1", "value1")

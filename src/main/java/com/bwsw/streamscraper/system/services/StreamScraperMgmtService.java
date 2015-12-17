@@ -1,4 +1,4 @@
-package com.bwsw.streamscraper.system.models;
+package com.bwsw.streamscraper.system.services;
 
 import com.bwsw.streamscraper.system.exceptions.DuplicateVstreamException;
 import com.datastax.driver.core.*;
