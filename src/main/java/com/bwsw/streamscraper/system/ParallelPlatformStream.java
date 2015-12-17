@@ -9,7 +9,7 @@ import java.util.UUID;
  * @author ivan
  *
  */
-public class ParallelPlatformStream extends PlatformStream {
+public class ParallelPlatformStream extends PlatformStream implements IParallelStream {
 
 	/**
 	 * 
@@ -33,12 +33,14 @@ public class ParallelPlatformStream extends PlatformStream {
         setBandwidth(bandwidth);
     }
 
-    public int getBandwidth() throws ImpossibleStreamException {
+    public int getBandwidth() {
         return Integer.parseInt(getProperty(P_BANDWIDTH));
     }
 
-    private void setBandwidth(int bw) {
-        setProperty(P_BANDWIDTH, new Integer(bw).toString());
+    private void setBandwidth(int bandwidth) throws ImpossibleStreamException {
+        if (bandwidth < 2)
+            throw new ImpossibleStreamException("Minimal bandwidth is 2.");
+        setProperty(P_BANDWIDTH, new Integer(bandwidth).toString());
     }
 
 }

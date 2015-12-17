@@ -9,115 +9,82 @@ public class VirtualStream extends PlatformStream {
 	// defines weight of virtual vstream.
 	// used to balance vstreams across pstreams.
 	int weight;
+	String name;
 
-	public VirtualStream() {
+	public VirtualStream(String name, int weight) {
 		// TODO Auto-generated constructor stub
 		super();
 		assignedStream = null;
+		this.weight = weight;
+		this.name = name;
+		setHasChanges(true);
 	}
 
-	public VirtualStream(UUID id) {
+	public VirtualStream(UUID id, String name, int weight) {
 		super(id);
-		assignedStream = null;
-		weight = 1;
+		this.assignedStream = null;
+		this.weight = weight;
+		this.name = name;
 		setHasChanges(true);
 	}
 
-
-	public VirtualStream(PlatformStream pcopy) {
-		super(pcopy.getID());
-		assignedStream = null;
-		vstreams = pcopy.vstreams;
-		properties = pcopy.properties;
-		weight = 1;
-		setHasChanges(true);
-	}
 
 	public static void addPolicyCheck(VirtualStream vs, PlatformStream ps) throws IncompatibleStreamException {
-		String excMessage;
-		while (true) {
-			if (vs.getProperty(PlatformStream.P_BANDWIDTH) != ps.getProperty(PlatformStream.P_BANDWIDTH)) {
-				excMessage = "Vstream & Pstream P_BANDWIDTH mismatch.";
-				break;
-			}
-
-			if (vs.getProperty(PlatformStream.P_BACKLOG) != ps.getProperty(PlatformStream.P_BACKLOG)) {
-				excMessage = "Vstream & Pstream P_BACKLOG mismatch.";
-				break;
-			}
-
-			if (null != ps.getProperty(PlatformStream.P_SOLID)) {
-				excMessage = "Pstream P_SOLID is set. Shouldn't be set.";
-				break;
-			}
-
-			if (vs.getProperty(PlatformStream.P_EPHEMERAL) != ps.getProperty(PlatformStream.P_EPHEMERAL)) {
-				excMessage = "Vstream & Pstream P_EPHEMERAL mismatch.";
-				break;
-			}
-
-			if (vs.getProperty(P_PARALLEL) != ps.getProperty(P_PARALLEL)) {
-				excMessage = "Vstream & Pstream P_PARALLEL mismatch.";
-				break;
-			}
-
-			if (vs.getProperty(P_RECURRENT) != ps.getProperty(P_RECURRENT)) {
-				excMessage = "Vstream & Pstream P_RECURRENT mismatch.";
-				break;
-			}
-
-			if (null == vs.getProperty(P_RECURRENT) && null == vs.getProperty(P_PARALLEL)) {
-				excMessage = "Vstream P_RECURRENT & P_PARALLEL are both unset.";
-				break;
-			}
-
-			if (null != vs.getProperty(P_RECURRENT) && null != vs.getProperty(P_PARALLEL)) {
-				excMessage = "Vstream P_RECURRENT & P_PARALLEL are both set.";
-				break;
-			}
-
-			if (null != vs.getProperty(P_RECURRENT) && "true" != vs.getProperty(P_RECURRENT)) {
-				excMessage = "Vstream P_RECURRENT is set, but neq true.";
-				break;
-			}
-
-			if (null != vs.getProperty(P_PARALLEL) && "true" != vs.getProperty(P_PARALLEL)) {
-				excMessage = "Vstream P_PARALLEL is set, but neq true.";
-				break;
-			}
-
-			if (null != ps.getProperty(P_RECURRENT) && "true" != ps.getProperty(P_RECURRENT)) {
-				excMessage = "Pstream P_RECURRENT is set, but neq true.";
-				break;
-			}
-
-			if (null != ps.getProperty(P_PARALLEL) && "true" != ps.getProperty(P_PARALLEL)) {
-				excMessage = "Pstream P_PARALLEL is set, but neq true.";
-				break;
-			}
-
-			if (null != vs.getAssignedStream()) {
-				excMessage = "Vstream has assigned Pstream (already bound).";
-				break;
-			}
-
-			if (vs.getHasChanges()) {
-				excMessage = "Vstream has unsaved changes. Will not save. Save it first.";
-				break;
-			}
-
-			if (ps.getHasChanges()) {
-				excMessage = "Pstream has unsaved changes. Will not save. Save it first.";
-				break;
-			}
+		try {
+			if (vs.getProperty(PlatformStream.P_BANDWIDTH) != ps.getProperty(PlatformStream.P_BANDWIDTH))
+				throw new Exception("Vstream & Pstream P_BANDWIDTH mismatch.");
 
 
-			return;
+			if (vs.getProperty(PlatformStream.P_BACKLOG) != ps.getProperty(PlatformStream.P_BACKLOG))
+				throw new Exception("Vstream & Pstream P_BACKLOG mismatch.");
+
+			if (null != ps.getProperty(PlatformStream.P_SOLID))
+				throw new Exception("Pstream P_SOLID is set. Shouldn't be set.");
+
+
+			if (vs.getProperty(PlatformStream.P_EPHEMERAL) != ps.getProperty(PlatformStream.P_EPHEMERAL))
+				throw new Exception("Vstream & Pstream P_EPHEMERAL mismatch.");
+
+			if (vs.getProperty(P_PARALLEL) != ps.getProperty(P_PARALLEL))
+				throw new Exception("Vstream & Pstream P_PARALLEL mismatch.");
+
+			if (vs.getProperty(P_RECURRENT) != ps.getProperty(P_RECURRENT))
+				throw new Exception("Vstream & Pstream P_RECURRENT mismatch.");
+
+
+			if (null == vs.getProperty(P_RECURRENT) && null == vs.getProperty(P_PARALLEL))
+				throw new Exception("Vstream P_RECURRENT & P_PARALLEL are both unset.");
+
+			if (null != vs.getProperty(P_RECURRENT) && null != vs.getProperty(P_PARALLEL))
+				throw new Exception("Vstream P_RECURRENT & P_PARALLEL are both set.");
+
+			if (null != vs.getProperty(P_RECURRENT) && "true" != vs.getProperty(P_RECURRENT))
+				throw new Exception("Vstream P_RECURRENT is set, but neq true.");
+
+			if (null != vs.getProperty(P_PARALLEL) && "true" != vs.getProperty(P_PARALLEL))
+				throw new Exception("Vstream P_PARALLEL is set, but neq true.");
+
+			if (null != ps.getProperty(P_RECURRENT) && "true" != ps.getProperty(P_RECURRENT))
+				throw new Exception("Pstream P_RECURRENT is set, but neq true.");
+
+			if (null != ps.getProperty(P_PARALLEL) && "true" != ps.getProperty(P_PARALLEL))
+				throw new Exception("Pstream P_PARALLEL is set, but neq true.");
+
+			if (null != vs.getAssignedStream())
+				throw new Exception("Vstream has assigned Pstream (already bound).");
+
+			if (vs.getHasChanges())
+				throw new Exception("Vstream has unsaved changes. Will not save. Save it first.");
+
+			if (ps.getHasChanges())
+				throw new Exception("Pstream has unsaved changes. Will not save. Save it first.");
+
+		} catch (Exception e) {
+
+			throw new IncompatibleStreamException("Vstream `" + vs.getID() +
+					"' is incompatible with " +
+					" pstream `" + ps.getID() + "': " + e.getMessage());
 		}
-
-		throw new IncompatibleStreamException("Vstream `" + vs.getID() +
-				"' is incompatible with " +
-				" pstream `" + ps.getID() + "': " + excMessage);
 	}
 
 	public static void updatePolicy(VirtualStream vs, PlatformStream ps) throws ImpossibleStreamException {
@@ -145,11 +112,10 @@ public class VirtualStream extends PlatformStream {
 		return weight;
 	}
 
-	public VirtualStream setWeight(int new_weight) throws ImpossibleStreamException {
+	private void setWeight(int weight) throws ImpossibleStreamException {
 		if (weight <= 0)
 			throw new ImpossibleStreamException("Vstream weight is set to negative value. Should be greater than 0.");
-		weight = new_weight;
-		return this;
+		this.weight = weight;
 	}
 
 	public PlatformStream getAssignedStream() {
@@ -169,5 +135,9 @@ public class VirtualStream extends PlatformStream {
 	@Override
 	public HashMap<UUID, VirtualStream> getVirtualStreams() {
 		return null;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

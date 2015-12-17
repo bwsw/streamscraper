@@ -1,6 +1,9 @@
 package com.bwsw.streamscraper.tests;
 
-import com.bwsw.streamscraper.system.*;
+import com.bwsw.streamscraper.system.DuplicateVstreamException;
+import com.bwsw.streamscraper.system.ImpossibleStreamException;
+import com.bwsw.streamscraper.system.IncompatibleStreamException;
+import com.bwsw.streamscraper.system.StreamScraperMgmtService;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
@@ -37,16 +40,16 @@ public class StreamsStorageUnitTests {
 				DuplicateVstreamException, 
 				IncompatibleStreamException, 
 				ImpossibleStreamException {
-		PlatformStreamStorageService ss = new PlatformStreamStorageService(svc);
+/*		PlatformStreamStorageService ss = new PlatformStreamStorageService(svc);
 		PlatformStream ps = new PlatformStream();
 		ps
 			.setProperty("property1", "value1")
 			.setProperty("property2", "value2")
 			.setProperty(PlatformStream.P_PARALLEL, "true")
 			.setProperty(PlatformStream.P_EPHEMERAL, "true")
-			.addVirtualStream((VirtualStream)(new VirtualStream())
+			.addVirtualStream((VirtualStream)(new VirtualStream("test",))
 					.setProperty(PlatformStream.P_PARALLEL, "true")
 					.setProperty(PlatformStream.P_EPHEMERAL, "true"));
-		ss.save(ps);
+		ss.save(ps);*/
 	}
 }

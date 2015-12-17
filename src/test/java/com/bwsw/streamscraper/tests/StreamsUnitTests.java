@@ -7,7 +7,7 @@ import org.junit.runners.MethodSorters;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -66,9 +66,9 @@ public class StreamsUnitTests {
 			IncompatibleStreamException, 
 			ImpossibleStreamException {
 		PlatformStream ps = new PlatformStream();
-		VirtualStream vs1 = new VirtualStream();
-		
-		try {
+        VirtualStream vs1 = new VirtualStream("test", 10);
+
+        try {
 				ps.addVirtualStream(vs1);
 				assertEquals(1, 0);
 		} catch (IncompatibleStreamException e) {
@@ -78,16 +78,16 @@ public class StreamsUnitTests {
 
     @Ignore
     public void test004_factoryPVS() throws ImpossibleStreamException {
-		VirtualStream vs = StreamFactory.getParallelVirtualStream(UUID.randomUUID(), 10, true);
-		assertNotEquals(null, vs);
+/*		VirtualStream vs = StreamFactory.getParallelVirtualStream(UUID.randomUUID(), 10, true);
+        assertNotEquals(null, vs);
 		assertEquals("10", vs.getProperty(PlatformStream.P_BANDWIDTH));
         assertEquals("true", vs.getProperty(PlatformStream.P_PARALLEL));
         assertEquals("true", vs.getProperty(PlatformStream.P_EPHEMERAL));
         assertEquals(1, vs.getWeight());
         assertEquals(null, vs.getProperty(PlatformStream.P_BACKLOG));
         assertEquals(null, vs.getProperty(PlatformStream.P_RECURRENT));
-
-	}
+*/
+    }
 
 	@Test
     public void test004_factoryPPS() throws ImpossibleStreamException {
@@ -96,257 +96,45 @@ public class StreamsUnitTests {
         assertEquals("true", ps.getProperty(PlatformStream.P_PARALLEL));
         assertEquals(null, ps.getProperty(PlatformStream.P_BACKLOG));
         assertEquals(null, ps.getProperty(PlatformStream.P_RECURRENT));
+
+        try {
+            ps = new ParallelPlatformStream(1);
+            assertTrue(false);
+        } catch (ImpossibleStreamException e) {
+            assertTrue(true);
+        }
+
+        try {
+            ps = new ParallelPlatformStream(0);
+            assertTrue(false);
+        } catch (ImpossibleStreamException e) {
+            assertTrue(true);
+        }
+
     }
 
     @Test
-    public void test004_factoryRVS() {
-        VirtualStream vs = StreamFactory.getRecurrentVirtualStream(UUID.randomUUID(), 100, true);
-        assertEquals("100", vs.getProperty(PlatformStream.P_BACKLOG));
-        assertEquals("true", vs.getProperty(PlatformStream.P_RECURRENT));
-        assertEquals("true", vs.getProperty(PlatformStream.P_EPHEMERAL));
-        assertEquals(1, vs.getWeight());
-        assertEquals(null, vs.getProperty(PlatformStream.P_BANDWIDTH));
-        assertEquals(null, vs.getProperty(PlatformStream.P_PARALLEL));
+    public void test004_factoryRVS() throws ImpossibleStreamException {
+        ParallelVirtualStream vs;
     }
 
     @Test
-    public void test004_factoryRPS() {
-        PlatformStream ps = StreamFactory.getRecurrentPlatformStream(UUID.randomUUID(), 100);
+    public void test004_factoryRPS() throws ImpossibleStreamException {
+        RecurrentPlatformStream ps = new RecurrentPlatformStream(UUID.randomUUID(), 100);
+        assertEquals(100, ps.getBacklogLength());
         assertEquals(null, ps.getProperty(PlatformStream.P_BANDWIDTH));
         assertEquals(null, ps.getProperty(PlatformStream.P_PARALLEL));
         assertEquals("100", ps.getProperty(PlatformStream.P_BACKLOG));
         assertEquals("true", ps.getProperty(PlatformStream.P_RECURRENT));
+
+        try {
+            ps = new RecurrentPlatformStream(-1);
+            assertTrue(false);
+        } catch (ImpossibleStreamException e) {
+            assertTrue(true);
+        }
+
     }
 
 
-/*	@Test
-	public void test001() throws Exception {
-		
-		 * ParallelPlatformStream
-		 
-		assertNotEquals(null, svc.createParallelPlatformStream(100));
-	}
-
-	@Test
-	public void test002()  throws Exception {
-		
-		 * ParallelPlatformStreamDefault
-		 
-		assertNotEquals(null, svc.createParallelPlatformStream());
-	}
-	
-	@Test
-	public void test003() {
-		
-		 * RecurrentPlatformStream
-		 
-		assertNotEquals(null, svc.createRecurrentPlatformStream(200));
-	}
-	
-	@Test
-	public void test004() throws Exception {
-		
-		 * RecurrentPlatformStreamDefault
-		 
-		assertNotEquals(null, svc.createRecurrentPlatformStream());				
-	}
-	
-	@Test
-	public void test005() {
-		
-		 * GetParallelPlatformStreamByParam
-		 
-		ArrayList<UUID> l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, StreamScraperMgmtService.PPROP_BANDWIDTH, "10");
-		assertEquals(0, l.size());
-		svc.createParallelPlatformStream(10);
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, StreamScraperMgmtService.PPROP_BANDWIDTH, "10");
-		assertEquals(1, l.size());
-		svc.createParallelPlatformStream(10);
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, StreamScraperMgmtService.PPROP_BANDWIDTH, "10");
-		assertEquals(2, l.size());
-	}
-
-	@Test
-	public void test006() {
-		
-		 * GetRecurrentPlatformStreamByParam
-		 
-		ArrayList<UUID> l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_RECURRENT, StreamScraperMgmtService.PPROP_BACKLOG, "10");
-		assertEquals(0,l.size());
-		svc.createRecurrentPlatformStream(10);
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_RECURRENT, StreamScraperMgmtService.PPROP_BACKLOG, "10");
-		assertEquals(1,l.size());
-
-		svc.createRecurrentPlatformStream(10);
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_RECURRENT, StreamScraperMgmtService.PPROP_BACKLOG, "10");
-		assertEquals(2,l.size());
-	}
-	
-	@Test
-	public void test007() throws Exception {
-		 VirtualStreamRecurrentEphemeralCreate
-		 * when we create ephemeral vstream it should be mapped on existing only-ephemeral pstream 
-		 * of the same bandwidth. If backlog is different, then other pstream will be created. 
-		 
-
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-									StreamScraperMgmtService.VTYPE_RECURRENT, 
-									StreamScraperMgmtService.VTYPE_EPHEMERAL, 
-									StreamScraperMgmtService.PPROP_BACKLOG, 
-									"99", "");
-		
-		ArrayList<UUID> l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_RECURRENT, StreamScraperMgmtService.PPROP_BACKLOG, "99");
-		assertEquals(1,l.size());
-
-		
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-									StreamScraperMgmtService.VTYPE_RECURRENT, 
-									StreamScraperMgmtService.VTYPE_EPHEMERAL, 
-									StreamScraperMgmtService.PPROP_BACKLOG, 
-									"99", "");
-
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_RECURRENT, StreamScraperMgmtService.PPROP_BACKLOG, "99");
-		assertEquals(1,l.size());
-
-		
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-									StreamScraperMgmtService.VTYPE_RECURRENT, 
-									StreamScraperMgmtService.VTYPE_EPHEMERAL, 
-									StreamScraperMgmtService.PPROP_BACKLOG, 
-									"99", "");
-
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_RECURRENT, StreamScraperMgmtService.PPROP_BACKLOG, "99");
-		assertEquals(1,l.size());
-
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-				StreamScraperMgmtService.VTYPE_RECURRENT, 
-				StreamScraperMgmtService.VTYPE_EPHEMERAL, 
-				StreamScraperMgmtService.PPROP_BACKLOG, 
-				"100", "");
-
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_RECURRENT, StreamScraperMgmtService.PPROP_BACKLOG, "99");
-		assertEquals(1,l.size());
-		
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_RECURRENT, StreamScraperMgmtService.PPROP_BACKLOG, "100");
-		assertEquals(1,l.size());
-		
-	}
-	
-	@Test
-	public void test008() throws Exception {
-		
-		 * VirtualStreamParallelEphemeralCreate
-		 * when we create ephemeral vstream it should be mapped on existing only-ephemeral pstream 
-		 * of the same bandwidth. If bandwidth is different, then other pstream will be created. 
-		 
-		
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-									StreamScraperMgmtService.VTYPE_PARALLEL, 
-									StreamScraperMgmtService.VTYPE_EPHEMERAL, 
-									StreamScraperMgmtService.PPROP_BANDWIDTH, 
-									"10", "");
-
-		ArrayList<UUID> l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, 
-															StreamScraperMgmtService.PPROP_BANDWIDTH, "10");
-		assertEquals(1,l.size());
-
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-				StreamScraperMgmtService.VTYPE_PARALLEL, 
-				StreamScraperMgmtService.VTYPE_EPHEMERAL, 
-				StreamScraperMgmtService.PPROP_BANDWIDTH, 
-				"10", "");
-
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, 
-				StreamScraperMgmtService.PPROP_BANDWIDTH, "10");
-		assertEquals(1,l.size());
-
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-				StreamScraperMgmtService.VTYPE_PARALLEL, 
-				StreamScraperMgmtService.VTYPE_EPHEMERAL, 
-				StreamScraperMgmtService.PPROP_BANDWIDTH, 
-				"12", "");
-
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, 
-				StreamScraperMgmtService.PPROP_BANDWIDTH, "10");
-		assertEquals(1,l.size());
-
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, 
-				StreamScraperMgmtService.PPROP_BANDWIDTH, "12");
-		assertEquals(1,l.size());
-		
-	}
-
-	@Test
-	public void test009() throws Exception {
-		
-		 * VirtualStreamParallelSolidCreate
-		 * when we create new vstream as solid it should be mapped to free pstream 
-		 * (or to newly created pstream)
-		 
-		UUID ps1 = svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-									StreamScraperMgmtService.VTYPE_PARALLEL, 
-									StreamScraperMgmtService.VTYPE_SOLID, 
-									StreamScraperMgmtService.PPROP_BANDWIDTH, 
-									"10", "");
-
-		ArrayList<UUID> l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, 
-															StreamScraperMgmtService.PPROP_BANDWIDTH, "10");
-		assertEquals(1,l.size());
-
-		UUID ps2 = svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-									StreamScraperMgmtService.VTYPE_PARALLEL, 
-									StreamScraperMgmtService.VTYPE_SOLID, 
-									StreamScraperMgmtService.PPROP_BANDWIDTH, 
-									"10", "");
-
-		assertNotEquals(ps1, ps2);
-				
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, 
-				StreamScraperMgmtService.PPROP_BANDWIDTH, "10");
-
-		assertEquals(2,l.size());
-
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-									StreamScraperMgmtService.VTYPE_PARALLEL, 
-									StreamScraperMgmtService.VTYPE_EPHEMERAL, 
-									StreamScraperMgmtService.PPROP_BANDWIDTH, 
-									"10", "");
-
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, 
-									StreamScraperMgmtService.PPROP_BANDWIDTH, "10");
-		
-		assertEquals(3,l.size());
-
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-									StreamScraperMgmtService.VTYPE_PARALLEL, 
-									StreamScraperMgmtService.VTYPE_EPHEMERAL, 
-									StreamScraperMgmtService.PPROP_BANDWIDTH, 
-									"10", "");
-
-		l = svc.getPlatformStreamsByParam(StreamScraperMgmtService.PSTYPE_PARALLEL, 
-									StreamScraperMgmtService.PPROP_BANDWIDTH, "10");
-		assertEquals(3,l.size());
-
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-									StreamScraperMgmtService.VTYPE_PARALLEL, 
-									StreamScraperMgmtService.VTYPE_SOLID, 
-									StreamScraperMgmtService.PPROP_BANDWIDTH, 
-									"10", "");
-
-		assertEquals(4,l.size());
-		
-	}
-
-	@Test
-	public void test010() throws Exception {
-		
-		 * VirtualStreamRecurrentSolidCreate
-		 
-		svc.createGenericVirtualStream(UUID.randomUUID().toString(), 
-									StreamScraperMgmtService.VTYPE_RECURRENT, 
-									StreamScraperMgmtService.VTYPE_SOLID, 
-									StreamScraperMgmtService.PPROP_BACKLOG, 
-									"10", "");
-	}
-*/
 }
