@@ -68,13 +68,6 @@ public class StreamScraperMgmtService {
 		statement = session.prepare("INSERT INTO pstreams (stype, id) VALUES(?, ?)");
 		insertPstreamStmt = new BoundStatement(statement);		
 
-		//----------------------------------------------------------------------------------
-		statement = session.prepare("INSERT INTO pstream (id, key, value) VALUES(?, ?, ?)");
-		insertPstreamPropertiesStmt = new BoundStatement(statement);
-		//----------------------------------------------------------------------------------
-		statement = session.prepare("INSERT INTO pstream_vstream (pstreamid, vstreamid) VALUES(?, ?)");
-		insertPstreamVstreamsStmt = new BoundStatement(statement);
-
 		
 		//----------------------------------------------------------------------------------
 		statement = session.prepare("INSERT INTO pstreams_properties (pstype, key, value, stream_id) " + 
