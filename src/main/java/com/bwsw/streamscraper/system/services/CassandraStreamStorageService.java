@@ -1,5 +1,6 @@
 package com.bwsw.streamscraper.system.services;
 
+import com.bwsw.streamscraper.system.exceptions.BadPlatformStreamException;
 import com.bwsw.streamscraper.system.exceptions.IncompatibleStreamException;
 import com.bwsw.streamscraper.system.models.*;
 import com.datastax.driver.core.BoundStatement;
@@ -51,7 +52,8 @@ public class CassandraStreamStorageService implements IStreamStorageService {
     *
     *
     * */
-    private void saveConnectedVirtualStreams(PlatformStream ps) throws IncompatibleStreamException {
+    private void saveConnectedVirtualStreams(PlatformStream ps)
+            throws IncompatibleStreamException, BadPlatformStreamException {
         if (null != ps.getVirtualStreams()) {
             for (UUID id : ps.getVirtualStreams().keySet()) {
                 if (ps.getVirtualStream(id).getHasChanges())
@@ -67,8 +69,10 @@ public class CassandraStreamStorageService implements IStreamStorageService {
     *
     *
     * */
-    public void platformStreamBasicSave(PlatformStream ps) throws IncompatibleStreamException {
+    public void platformStreamBasicSave(PlatformStream ps)
+            throws IncompatibleStreamException, BadPlatformStreamException {
         saveProperties(ps);
+        ps.setHasChanges(false);
         saveConnectedVirtualStreams(ps);
     }
 
@@ -87,7 +91,8 @@ public class CassandraStreamStorageService implements IStreamStorageService {
     *
     *
     * */
-    public void save(PlatformStream s) throws IncompatibleStreamException {
+    public void save(PlatformStream s)
+            throws IncompatibleStreamException, BadPlatformStreamException {
         if (s.getClass().equals(ParallelPlatformStream.class)) {
             ParallelPlatformStream ps = (ParallelPlatformStream) s;
             int bandwidth = ps.getBandwidth();
@@ -114,9 +119,14 @@ public class CassandraStreamStorageService implements IStreamStorageService {
     *
     *
     * */
-    public void save(VirtualStream s) throws IncompatibleStreamException {
-        // TODO: check if platform stream exists and saved
-        // TODO: raise BadPlatformStream exception
+    public void save(VirtualStream s)
+            throws IncompatibleStreamException, BadPlatformStreamException {
+
+        if (null == s.getAssignedStream())
+            throw new BadPlatformStreamException("Pstream assigned to Vstream is null.");
+
+        if (s.getAssignedStream().getHasChanges())
+            throw new BadPlatformStreamException("Pstream assigned to Vstream has unsaved changes.");
 
         if (s.getClass().equals(ParallelVirtualStream.class)) {
             ParallelVirtualStream vs = (ParallelVirtualStream) s;
