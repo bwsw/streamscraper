@@ -65,14 +65,14 @@ public class J2V8Handler extends BasicHandler {
     @Override
     public void init() throws Exception {
         V8Object f = runtime.getObject(J2V8Handler.P_INIT);
-        if (null != f)
+        if (!V8.getUndefined().equals(f))
             script.executeVoidFunction(J2V8Handler.P_INIT, null);
     }
 
     @Override
     public void commit() throws Exception {
         V8Object f = runtime.getObject(J2V8Handler.P_COMMIT);
-        if (null != f)
+        if (!V8.getUndefined().equals(f))
             script.executeVoidFunction(J2V8Handler.P_COMMIT, null);
     }
 
@@ -80,6 +80,7 @@ public class J2V8Handler extends BasicHandler {
         V8Array arr = new V8Array(runtime);
         String s = (String) object;
         V8Object o = runtime.executeObjectScript(s);
+        // TODO: fix null etc.
         if (null == o)
             throw new JSONCompileException("Failed to compile `" + s + "' to JSON.");
         arr.push(o);
@@ -89,7 +90,7 @@ public class J2V8Handler extends BasicHandler {
     @Override
     public void process(Object obj) throws Exception {
         V8Object f = runtime.getObject(J2V8Handler.P_COMMIT);
-        if (null != f) {
+        if (!V8.getUndefined().equals(f)) {
             V8Array array = prepareData(obj);
             script.executeVoidFunction(J2V8Handler.P_PROCESS, array);
         }
