@@ -14,7 +14,7 @@ import java.util.UUID;
 //import com.datastax.driver.core;
 
 
-public class CassandraStreamManagementService {
+public class CassandraStreamManagementService implements IStreamManagementService {
 
 	public static final int PSTYPE_RECURRENT = 1;
 	public static final int PSTYPE_PARALLEL = 2;

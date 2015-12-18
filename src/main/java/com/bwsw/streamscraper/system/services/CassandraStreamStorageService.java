@@ -8,14 +8,14 @@ import com.datastax.driver.core.Session;
 
 import java.util.UUID;
 
-public class StreamStorageService implements IStreamStorageService {
+public class CassandraStreamStorageService implements IStreamStorageService {
 
     CassandraStreamManagementService service;
 
     BoundStatement insertPstreamPropertiesStmt;
     BoundStatement insertPstreamVstreamsStmt;
 
-    public StreamStorageService(CassandraStreamManagementService svc) {
+    public CassandraStreamStorageService(CassandraStreamManagementService svc) {
         service = svc;
         init();
     }

@@ -40,7 +40,7 @@ public class StreamsStorageUnitTests {
 				DuplicateVstreamException, 
 				IncompatibleStreamException, 
 				ImpossibleStreamException {
-/*		StreamStorageService ss = new StreamStorageService(svc);
+/*		CassandraStreamStorageService ss = new CassandraStreamStorageService(svc);
 		PlatformStream ps = new PlatformStream();
 		ps
 			.setProperty("property1", "value1")
