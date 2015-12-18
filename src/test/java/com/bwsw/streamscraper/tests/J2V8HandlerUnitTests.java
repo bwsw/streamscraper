@@ -1,5 +1,6 @@
 package com.bwsw.streamscraper.tests;
 
+import com.eclipsesource.v8.V8;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
@@ -26,6 +27,11 @@ public class J2V8HandlerUnitTests {
 
     @Test
     public void test001() {
+        V8 runtime = V8.createV8Runtime();
+        //V8Function f = runtime. ("function cnt(s) { return s.length; }");
+        //int result = runtime.executeIntegerScript("var str = \"Hello World!\";cnt(str);");
+        //System.err.println(result);
+        runtime.release();
     }
 
     @Test
