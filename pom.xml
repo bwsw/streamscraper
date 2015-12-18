@@ -120,6 +120,11 @@
          <scope>test</scope>
       </dependency>
       <dependency>
+          <groupId>com.eclipsesource.j2v8</groupId>
+          <artifactId>j2v8_linux_x86_64</artifactId>
+          <version>3.0.2</version>
+      </dependency>
+       <dependency>
           <groupId>com.google.guava</groupId>
           <artifactId>guava</artifactId>
           <version>18.0</version>

@@ -1,8 +1,5 @@
 package com.bwsw.streamscraper.tests;
 
-import com.bwsw.streamscraper.system.exceptions.DuplicateVstreamException;
-import com.bwsw.streamscraper.system.exceptions.ImpossibleStreamException;
-import com.bwsw.streamscraper.system.exceptions.IncompatibleStreamException;
 import com.bwsw.streamscraper.system.services.CassandraStreamManagementService;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
@@ -34,22 +31,7 @@ public class StreamsStorageUnitTests {
 	public void tearDown() throws Exception {
 	}
 
-	@Ignore
-	public void test001_saveLoadPlatformStream() 
-			throws 
-				DuplicateVstreamException, 
-				IncompatibleStreamException, 
-				ImpossibleStreamException {
-/*		CassandraStreamStorageService ss = new CassandraStreamStorageService(svc);
-		PlatformStream ps = new PlatformStream();
-		ps
-			.setProperty("property1", "value1")
-			.setProperty("property2", "value2")
-			.setProperty(PlatformStream.P_PARALLEL, "true")
-			.setProperty(PlatformStream.P_EPHEMERAL, "true")
-			.addVirtualStream((VirtualStream)(new VirtualStream("test",))
-					.setProperty(PlatformStream.P_PARALLEL, "true")
-					.setProperty(PlatformStream.P_EPHEMERAL, "true"));
-		ss.save(ps);*/
+	@Test
+	public void test001_saveLoadPlatformStream() {
 	}
 }
