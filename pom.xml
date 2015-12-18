@@ -15,6 +15,7 @@
        <streamscraper.cassandra.ip>127.0.0.1</streamscraper.cassandra.ip>
        <streamscraper.streams.parallel.default_bandwidth>10</streamscraper.streams.parallel.default_bandwidth>
        <streamscraper.streams.recurrent.default_backlog>100</streamscraper.streams.recurrent.default_backlog>
+       <streamscraper.cassandra.db>streamscraper</streamscraper.cassandra.db>
    </properties>
    <developers>
       <developer>

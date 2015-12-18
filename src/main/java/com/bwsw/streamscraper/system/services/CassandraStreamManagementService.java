@@ -6,9 +6,6 @@ import com.datastax.driver.core.Session;
 import java.io.FileInputStream;
 import java.util.Properties;
 
-//import com.datastax.driver.core;
-//import com.datastax.driver.core;
-
 
 public class CassandraStreamManagementService implements IStreamManagementService {
 
@@ -28,8 +25,12 @@ public class CassandraStreamManagementService implements IStreamManagementServic
 			throw new Exception("Failed to find 'streamscraper.cassandra.ip' in properties file.");
 
 		cluster = Cluster.builder().addContactPoint(cassandra_ip).build();
-		session = cluster.connect("streamscraper");
-	}
+
+        String cassandra_db = properties.getProperty("streamscraper.cassandra.db");
+        if (null == cassandra_db)
+            cassandra_db = "streamscraper";
+        session = cluster.connect(cassandra_db);
+    }
 
     public String getProperty(String pname) {
         return properties.getProperty(pname);
