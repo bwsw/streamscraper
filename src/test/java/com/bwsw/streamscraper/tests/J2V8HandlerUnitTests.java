@@ -1,6 +1,6 @@
 package com.bwsw.streamscraper.tests;
 
-import com.eclipsesource.v8.V8;
+import com.bwsw.streamscraper.system.models.J2V8Handler;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
@@ -10,28 +10,32 @@ import static org.junit.Assert.assertEquals;
 public class J2V8HandlerUnitTests {
 
     @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    public static void setUpBeforeClass() throws java.lang.Exception {
     }
 
     @AfterClass
-    public static void tearDownAfterClass() throws Exception {
+    public static void tearDownAfterClass() {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
     }
 
     @Test
-    public void test001() {
-        V8 runtime = V8.createV8Runtime();
-        //V8Function f = runtime. ("function cnt(s) { return s.length; }");
-        //int result = runtime.executeIntegerScript("var str = \"Hello World!\";cnt(str);");
-        //System.err.println(result);
-        runtime.release();
+    public void test001() throws Exception {
+        try {
+            J2V8Handler h = new J2V8Handler(
+                    "{'init': function () { log('test'); } }", 1);
+            h.init();
+            h.shutdown();
+        } catch (Exception e) {
+            System.err.println(e.getClass().toString());
+            System.err.println(e.getMessage());
+        }
     }
 
     @Test
