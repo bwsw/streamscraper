@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Created by ivan on 18.12.15.
  */
-public class J2V8Handler extends BasicHandler {
+public class J2V8JSONHandler extends BasicHandler {
 
     static String P_PROCESS = "process";
     static String P_SHUTDOWN = "shutdown";
@@ -26,12 +26,11 @@ public class J2V8Handler extends BasicHandler {
     boolean do_shutdown;
     boolean do_commit;
 
-    public J2V8Handler(String code, int commit_interval) throws JSONCompileException, NoSuchAlgorithmException {
+    public J2V8JSONHandler(String code, int commit_interval) throws JSONCompileException, NoSuchAlgorithmException {
         super(commit_interval);
-        logger = LoggerFactory.getLogger(J2V8Handler.class);
+        logger = LoggerFactory.getLogger(J2V8JSONHandler.class);
         uniq = "v_06c57bd0be5d5ebffe5bcf4c305445ec";
         runtime = V8.createV8Runtime();
-
 
         JavaVoidCallback callback = (receiver, parameters) -> {
             if (parameters.length() > 0) {
@@ -60,36 +59,36 @@ public class J2V8Handler extends BasicHandler {
         do_process = true;
         do_commit = true;
 
-        if (!V8.getUndefined().equals(runtime.getObject(J2V8Handler.P_SHUTDOWN)))
+        if (!V8.getUndefined().equals(runtime.getObject(J2V8JSONHandler.P_SHUTDOWN)))
             do_shutdown = false;
 
-        if (!V8.getUndefined().equals(runtime.getObject(J2V8Handler.P_INIT)))
+        if (!V8.getUndefined().equals(runtime.getObject(J2V8JSONHandler.P_INIT)))
             do_init = false;
 
-        if (!V8.getUndefined().equals(runtime.getObject(J2V8Handler.P_PROCESS)))
+        if (!V8.getUndefined().equals(runtime.getObject(J2V8JSONHandler.P_PROCESS)))
             do_process = false;
 
-        if (!V8.getUndefined().equals(runtime.getObject(J2V8Handler.P_COMMIT)))
+        if (!V8.getUndefined().equals(runtime.getObject(J2V8JSONHandler.P_COMMIT)))
             do_commit = false;
     }
 
     @Override
     public void shutdown() throws Exception {
         if (do_shutdown)
-            script.executeVoidFunction(J2V8Handler.P_SHUTDOWN, null);
+            script.executeVoidFunction(J2V8JSONHandler.P_SHUTDOWN, null);
         super.shutdown();
     }
 
     @Override
     public void init() throws Exception {
         if (do_init)
-            script.executeVoidFunction(J2V8Handler.P_INIT, null);
+            script.executeVoidFunction(J2V8JSONHandler.P_INIT, null);
     }
 
     @Override
     public void commit() throws Exception {
         if (do_commit)
-            script.executeVoidFunction(J2V8Handler.P_COMMIT, null);
+            script.executeVoidFunction(J2V8JSONHandler.P_COMMIT, null);
     }
 
     protected V8Array prepareData(Object object) throws Exception {
@@ -105,10 +104,10 @@ public class J2V8Handler extends BasicHandler {
 
     @Override
     public void process(Object obj) throws Exception {
-        V8Object f = runtime.getObject(J2V8Handler.P_COMMIT);
+        V8Object f = runtime.getObject(J2V8JSONHandler.P_COMMIT);
         if (!V8.getUndefined().equals(f)) {
             V8Array array = prepareData(obj);
-            script.executeVoidFunction(J2V8Handler.P_PROCESS, array);
+            script.executeVoidFunction(J2V8JSONHandler.P_PROCESS, array);
         }
     }
 }
