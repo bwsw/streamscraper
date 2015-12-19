@@ -21,6 +21,10 @@ public class J2V8Handler extends BasicHandler {
     String uniq;
     V8Object script;
     Logger logger;
+    boolean do_init;
+    boolean do_process;
+    boolean do_shutdown;
+    boolean do_commit;
 
     public J2V8Handler(String code, int commit_interval) throws JSONCompileException, NoSuchAlgorithmException {
         super(commit_interval);
@@ -49,30 +53,42 @@ public class J2V8Handler extends BasicHandler {
         if (null == script)
             throw new JSONCompileException("Unable to compile `" + code + "'.");
 
+        V8Object f;
 
+        do_shutdown = true;
+        do_init = true;
+        do_process = true;
+        do_commit = true;
 
+        if (!V8.getUndefined().equals(runtime.getObject(J2V8Handler.P_SHUTDOWN)))
+            do_shutdown = false;
+
+        if (!V8.getUndefined().equals(runtime.getObject(J2V8Handler.P_INIT)))
+            do_init = false;
+
+        if (!V8.getUndefined().equals(runtime.getObject(J2V8Handler.P_PROCESS)))
+            do_process = false;
+
+        if (!V8.getUndefined().equals(runtime.getObject(J2V8Handler.P_COMMIT)))
+            do_commit = false;
     }
 
     @Override
     public void shutdown() throws Exception {
-        V8Object f = runtime.getObject(J2V8Handler.P_SHUTDOWN);
-        if (!V8.getUndefined().equals(f)) {
+        if (do_shutdown)
             script.executeVoidFunction(J2V8Handler.P_SHUTDOWN, null);
-        }
         super.shutdown();
     }
 
     @Override
     public void init() throws Exception {
-        V8Object f = runtime.getObject(J2V8Handler.P_INIT);
-        if (!V8.getUndefined().equals(f))
+        if (do_init)
             script.executeVoidFunction(J2V8Handler.P_INIT, null);
     }
 
     @Override
     public void commit() throws Exception {
-        V8Object f = runtime.getObject(J2V8Handler.P_COMMIT);
-        if (!V8.getUndefined().equals(f))
+        if (do_commit)
             script.executeVoidFunction(J2V8Handler.P_COMMIT, null);
     }
 
