@@ -17,6 +17,7 @@ var handler = {
         // init
         id = makeid();
         kv_store_set(id,1);
+        id = makeid();
         var v = kv_store_get(id);
     },
     'shutdown': function() {
