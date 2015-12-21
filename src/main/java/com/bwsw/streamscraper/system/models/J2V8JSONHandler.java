@@ -1,12 +1,14 @@
 package com.bwsw.streamscraper.system.models;
 
 import com.bwsw.streamscraper.system.exceptions.JSONCompileException;
+import com.bwsw.streamscraper.system.models.adapters.ICallbackFactory;
 import com.eclipsesource.v8.*;
 import org.apache.samza.storage.kv.KeyValueStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 /**
  * Created by ivan on 18.12.15.
@@ -17,6 +19,7 @@ public class J2V8JSONHandler extends BasicHandler {
     static String P_SHUTDOWN = "shutdown";
     static String P_INIT = "init";
     static String P_COMMIT = "commit";
+    private static ArrayList<ICallbackFactory> callback_factory_list;
     V8 runtime;
     String uniq;
     V8Object script;
@@ -27,25 +30,27 @@ public class J2V8JSONHandler extends BasicHandler {
     boolean do_commit;
     KeyValueStore<Object, Object> store;
 
-    public J2V8JSONHandler(String code, int commit_interval)
+    public J2V8JSONHandler(String code, int commit_interval, KeyValueStore<Object, Object> stor)
             throws
             JSONCompileException,
             NoSuchAlgorithmException {
         super(commit_interval);
-        //store
-        logger = LoggerFactory.getLogger(J2V8JSONHandler.class);
-        uniq = "v_06c57bd0be5d5ebffe5bcf4c305445ec";
+        store = stor;
+        uniq = "handler";
         runtime = V8.createV8Runtime();
+        logger = LoggerFactory.getLogger(J2V8JSONHandler.class);
 
         registerLogCallback(runtime, logger);
-        registerKVStoreGetCallback(runtime, logger);
-        registerKVStoreSetCallback(runtime, logger);
-        registerKVStoreDelCallback(runtime, logger);
 
-        String scr = "var " + uniq + " = " + code + ";";
-        System.err.println(scr);
-        runtime.executeVoidScript(scr);
+        for (ICallbackFactory f : callback_factory_list)
+            f.generate(runtime, store, logger);
+
+        runtime.executeVoidScript(code);
+        //System.err.println(code);
+
         script = runtime.getObject(uniq);
+        //System.err.println(script);
+
         if (null == script)
             throw new JSONCompileException("Unable to compile `" + code + "'.");
 
@@ -56,64 +61,10 @@ public class J2V8JSONHandler extends BasicHandler {
 
     }
 
-    private void registerKVStoreDelCallback(V8 runtime, Logger logger) {
-        JavaVoidCallback store_del = (receiver, parameters) -> {
-            try {
-                if (parameters.length() > 0) {
-                    Object arg1 = parameters.get(0);
-                    store.delete(arg1);
-                    if (arg1 instanceof Releasable) {
-                        ((Releasable) arg1).release();
-                    }
-                }
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
-                System.err.println(e.getClass().toString());
-            }
-        };
-        runtime.registerJavaMethod(store_del, "kv_store_del");
-    }
-
-    private void registerKVStoreSetCallback(V8 runtime, Logger logger) {
-        JavaVoidCallback store_set = (receiver, parameters) -> {
-            try {
-                if (parameters.length() > 1) {
-                    Object arg1 = parameters.get(0);
-                    Object arg2 = parameters.get(1);
-                    store.put(arg1, arg2);
-                    if (arg1 instanceof Releasable) {
-                        ((Releasable) arg1).release();
-                    }
-                    if (arg2 instanceof Releasable) {
-                        ((Releasable) arg2).release();
-                    }
-                }
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
-                System.err.println(e.getClass().toString());
-            }
-        };
-        runtime.registerJavaMethod(store_set, "kv_store_set");
-    }
-
-    private void registerKVStoreGetCallback(V8 runtime, Logger logger) {
-        JavaCallback store_get = (receiver, parameters) -> {
-            Object value = null;
-            try {
-                if (parameters.length() > 0) {
-                    Object arg1 = parameters.get(0);
-                    value = store.get(arg1);
-                    if (arg1 instanceof Releasable) {
-                        ((Releasable) arg1).release();
-                    }
-                }
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
-                System.err.println(e.getClass().toString());
-            }
-            return value;
-        };
-        runtime.registerJavaMethod(store_get, "kv_store_get");
+    public static void addCallbackFactory(ICallbackFactory f) {
+        if (null == callback_factory_list)
+            callback_factory_list = new ArrayList<>();
+        callback_factory_list.add(f);
     }
 
     private void registerLogCallback(V8 runtime, Logger logger) {
@@ -128,10 +79,6 @@ public class J2V8JSONHandler extends BasicHandler {
             }
         };
         runtime.registerJavaMethod(callback, "log");
-    }
-
-    public void setStore(KeyValueStore<Object, Object> kv) {
-        store = kv;
     }
 
     @Override

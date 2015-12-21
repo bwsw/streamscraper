@@ -103,14 +103,15 @@
             </configuration>
         </plugin -->
       </plugins>
-       <!-- resources>
+       <resources>
           <resource>
-             <directory>${basedir}/src/main/java</directory>
+              <directory>${basedir}/src/main/resources</directory>
              <includes>
                 <include>**/*.properties</include>
+                 <include>**/*.js</include>
              </includes>
           </resource>
-       </resources -->
+       </resources>
    </build>
    <dependencies>
       <dependency>
