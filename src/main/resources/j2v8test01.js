@@ -1,5 +1,3 @@
-//var uuid = require("uuid");
-//var id = uuid.v4();
 
 function makeid()
 {

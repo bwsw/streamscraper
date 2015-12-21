@@ -23,6 +23,7 @@ public class J2V8JSONHandler extends BasicHandler {
     String uniq;
     V8Object script;
     Logger logger;
+
     boolean do_init;
     boolean do_process;
     boolean do_shutdown;
@@ -43,10 +44,8 @@ public class J2V8JSONHandler extends BasicHandler {
             f.generate(this);
 
         runtime.executeVoidScript(code);
-        //System.err.println(code);
 
         script = runtime.getObject(uniq);
-        //System.err.println(script);
 
         if (null == script)
             throw new JSONCompileException("Unable to compile `" + code + "'.");
@@ -114,7 +113,13 @@ public class J2V8JSONHandler extends BasicHandler {
     @Override
     public void commit() throws Exception {
         if (do_commit)
-            script.executeVoidFunction(J2V8JSONHandler.P_COMMIT, null);
+            try {
+                script.executeVoidFunction(J2V8JSONHandler.P_COMMIT, null);
+            } catch (Exception e) {
+                do_commit = false;
+                System.err.println(e.getClass().toString());
+                System.err.println(e.getMessage());
+            }
     }
 
     protected V8Array prepareData(Object object) throws Exception {
@@ -130,12 +135,18 @@ public class J2V8JSONHandler extends BasicHandler {
 
     @Override
     public void process(Object obj) throws Exception {
-        V8Object f = runtime.getObject(J2V8JSONHandler.P_COMMIT);
-        if (!V8.getUndefined().equals(f)) {
-            V8Array array = prepareData(obj);
-            script.executeVoidFunction(J2V8JSONHandler.P_PROCESS, array);
-        }
+        if (do_process)
+            try {
+                V8Array array = prepareData(obj);
+                script.executeVoidFunction(J2V8JSONHandler.P_PROCESS, array);
+                array.release();
+            } catch (Exception e) {
+                do_process = false;
+                System.err.println(e.getClass().toString());
+                System.err.println(e.getMessage());
+            }
     }
+
 }
 
 
