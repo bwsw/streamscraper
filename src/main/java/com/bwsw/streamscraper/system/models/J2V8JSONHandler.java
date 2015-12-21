@@ -3,7 +3,6 @@ package com.bwsw.streamscraper.system.models;
 import com.bwsw.streamscraper.system.exceptions.JSONCompileException;
 import com.bwsw.streamscraper.system.models.adapters.ICallbackFactory;
 import com.eclipsesource.v8.*;
-import org.apache.samza.storage.kv.KeyValueStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,14 +27,12 @@ public class J2V8JSONHandler extends BasicHandler {
     boolean do_process;
     boolean do_shutdown;
     boolean do_commit;
-    KeyValueStore<Object, Object> store;
 
-    public J2V8JSONHandler(String code, int commit_interval, KeyValueStore<Object, Object> stor)
+    public J2V8JSONHandler(String code, int commit_interval)
             throws
             JSONCompileException,
             NoSuchAlgorithmException {
         super(commit_interval);
-        store = stor;
         uniq = "handler";
         runtime = V8.createV8Runtime();
         logger = LoggerFactory.getLogger(J2V8JSONHandler.class);
@@ -43,7 +40,7 @@ public class J2V8JSONHandler extends BasicHandler {
         registerLogCallback(runtime, logger);
 
         for (ICallbackFactory f : callback_factory_list)
-            f.generate(runtime, store, logger);
+            f.generate(this);
 
         runtime.executeVoidScript(code);
         //System.err.println(code);
@@ -65,6 +62,14 @@ public class J2V8JSONHandler extends BasicHandler {
         if (null == callback_factory_list)
             callback_factory_list = new ArrayList<>();
         callback_factory_list.add(f);
+    }
+
+    public V8 getRuntime() {
+        return runtime;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 
     private void registerLogCallback(V8 runtime, Logger logger) {

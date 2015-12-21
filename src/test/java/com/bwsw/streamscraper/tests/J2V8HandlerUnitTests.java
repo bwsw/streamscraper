@@ -2,6 +2,7 @@ package com.bwsw.streamscraper.tests;
 
 import com.bwsw.streamscraper.system.models.HashKeyValueStoreStub;
 import com.bwsw.streamscraper.system.models.J2V8JSONHandler;
+import com.bwsw.streamscraper.system.models.adapters.J2V8KeyValueStoreCallbackFactory;
 import org.json.simple.parser.ParseException;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
@@ -20,6 +21,9 @@ public class J2V8HandlerUnitTests {
 
     @BeforeClass
     public static void setUpBeforeClass() throws java.lang.Exception {
+        J2V8JSONHandler.addCallbackFactory(
+                new J2V8KeyValueStoreCallbackFactory(
+                        new HashKeyValueStoreStub<>()));
     }
 
     @AfterClass
@@ -45,8 +49,7 @@ public class J2V8HandlerUnitTests {
         try {
             J2V8JSONHandler h = new J2V8JSONHandler(
                     readFile("../../src/main/resources/j2v8test01.js",
-                            Charset.defaultCharset()), 1,
-                    new HashKeyValueStoreStub<>());
+                            Charset.defaultCharset()), 1);
             h.init();
             h.shutdown();
         } catch (Exception e) {
@@ -61,8 +64,7 @@ public class J2V8HandlerUnitTests {
         try {
             J2V8JSONHandler h = new J2V8JSONHandler(
                     readFile("../../src/main/resources/j2v8test01.js",
-                            Charset.defaultCharset()), 1,
-                    new HashKeyValueStoreStub<>());
+                            Charset.defaultCharset()), 1);
 
             long start = System.currentTimeMillis();
             for (int i = 0; i < 1000000; i++)

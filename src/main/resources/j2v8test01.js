@@ -1,3 +1,6 @@
+//var uuid = require("uuid");
+//var id = uuid.v4();
+
 function makeid()
 {
     var text = "";
@@ -11,15 +14,19 @@ function makeid()
 
 var handler = {
     'init': function () {
+        // init
         id = makeid();
         kv_store_set(id,1);
         var v = kv_store_get(id);
     },
     'shutdown': function() {
+        // on shutdown
     },
     'commit': function() {
+        // on commit
     },
     'process': function(data) {
+        // on process
     },
     'commit_interval': 60
 };

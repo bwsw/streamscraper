@@ -1,5 +1,8 @@
 package com.bwsw.streamscraper.system.models.adapters;
 
+import com.bwsw.streamscraper.system.models.BasicHandler;
+import com.bwsw.streamscraper.system.models.HashKeyValueStoreStub;
+import com.bwsw.streamscraper.system.models.J2V8JSONHandler;
 import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.JavaVoidCallback;
 import com.eclipsesource.v8.Releasable;
@@ -11,6 +14,12 @@ import org.slf4j.Logger;
  * Created by ivan on 21.12.15.
  */
 public class J2V8KeyValueStoreCallbackFactory implements ICallbackFactory {
+    HashKeyValueStoreStub<Object, Object> store;
+
+    public J2V8KeyValueStoreCallbackFactory(HashKeyValueStoreStub<Object, Object> store) {
+        this.store = store;
+    }
+
     private static void registerKVStoreDelCallback(V8 runtime, KeyValueStore<Object, Object> store, Logger logger) {
         JavaVoidCallback store_del = (receiver, parameters) -> {
             try {
@@ -71,14 +80,12 @@ public class J2V8KeyValueStoreCallbackFactory implements ICallbackFactory {
         runtime.registerJavaMethod(store_get, "kv_store_get");
     }
 
-    public void generate(Object runtime_env, Object entity, Logger logger) {
+    public void generate(BasicHandler h) {
+        J2V8JSONHandler handler = (J2V8JSONHandler) h;
 
-        V8 runtime = (V8) runtime_env;
-        KeyValueStore<Object, Object> store = (KeyValueStore<Object, Object>) entity;
-
-        registerKVStoreDelCallback(runtime, store, logger);
-        registerKVStoreSetCallback(runtime, store, logger);
-        registerKVStoreGetCallback(runtime, store, logger);
+        registerKVStoreDelCallback(handler.getRuntime(), store, handler.getLogger());
+        registerKVStoreSetCallback(handler.getRuntime(), store, handler.getLogger());
+        registerKVStoreGetCallback(handler.getRuntime(), store, handler.getLogger());
     }
 
 
