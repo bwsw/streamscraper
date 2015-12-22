@@ -2,7 +2,7 @@ package com.bwsw.streamscraper.tests;
 
 import com.bwsw.streamscraper.system.models.HashKeyValueStoreStub;
 import com.bwsw.streamscraper.system.models.J2V8JSONHandler;
-import com.bwsw.streamscraper.system.models.adapters.J2V8KeyValueStoreCallbackFactory;
+import com.bwsw.streamscraper.system.models.adapters.j2v8.KeyValueStoreCallbackFactory;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
@@ -20,7 +20,7 @@ public class J2V8HandlerUnitTests {
     @BeforeClass
     public static void setUpBeforeClass() throws java.lang.Exception {
         J2V8JSONHandler.addCallbackFactory(
-                new J2V8KeyValueStoreCallbackFactory(
+                new KeyValueStoreCallbackFactory(
                         new HashKeyValueStoreStub<>()));
     }
 

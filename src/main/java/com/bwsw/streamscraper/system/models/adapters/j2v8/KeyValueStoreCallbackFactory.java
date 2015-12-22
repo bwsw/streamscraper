@@ -1,8 +1,9 @@
-package com.bwsw.streamscraper.system.models.adapters;
+package com.bwsw.streamscraper.system.models.adapters.j2v8;
 
 import com.bwsw.streamscraper.system.models.BasicHandler;
 import com.bwsw.streamscraper.system.models.HashKeyValueStoreStub;
 import com.bwsw.streamscraper.system.models.J2V8JSONHandler;
+import com.bwsw.streamscraper.system.models.adapters.ICallbackFactory;
 import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.JavaVoidCallback;
 import com.eclipsesource.v8.Releasable;
@@ -13,10 +14,10 @@ import org.slf4j.Logger;
 /**
  * Created by ivan on 21.12.15.
  */
-public class J2V8KeyValueStoreCallbackFactory implements ICallbackFactory {
+public class KeyValueStoreCallbackFactory implements ICallbackFactory {
     HashKeyValueStoreStub<Object, Object> store;
 
-    public J2V8KeyValueStoreCallbackFactory(HashKeyValueStoreStub<Object, Object> store) {
+    public KeyValueStoreCallbackFactory(HashKeyValueStoreStub<Object, Object> store) {
         this.store = store;
     }
 
