@@ -18,9 +18,10 @@ public class J2V8JSONHandler extends BasicHandler {
     static String P_SHUTDOWN = "shutdown";
     static String P_INIT = "init";
     static String P_COMMIT = "commit";
+    static String uniq = "v_cd6a84247215681203b961c73d47dca8";
+
     private static ArrayList<ICallbackFactory> callback_factory_list;
     V8 runtime;
-    String uniq;
     V8Object script;
     Logger logger;
 
@@ -34,7 +35,7 @@ public class J2V8JSONHandler extends BasicHandler {
             JSONCompileException,
             NoSuchAlgorithmException {
         super(commit_interval);
-        uniq = "handler";
+        String uniq_h = "handler";
         runtime = V8.createV8Runtime();
         logger = LoggerFactory.getLogger(J2V8JSONHandler.class);
 
@@ -42,10 +43,10 @@ public class J2V8JSONHandler extends BasicHandler {
 
         for (ICallbackFactory f : callback_factory_list)
             f.generate(this);
-
+        runtime.executeVoidScript("function get_event() { return " + uniq + ";}");
         runtime.executeVoidScript(code);
 
-        script = runtime.getObject(uniq);
+        script = runtime.getObject(uniq_h);
 
         if (null == script)
             throw new JSONCompileException("Unable to compile `" + code + "'.");
@@ -149,35 +150,29 @@ public class J2V8JSONHandler extends BasicHandler {
         }
     }
 
-    protected V8Array prepareData(Object object) throws Exception {
-        V8Array arr = new V8Array(runtime);
+    protected boolean prepareData(Object object) throws Exception {
         String s = (String) object;
-        String uniq = "v_cd6a84247215681203b961c73d47dca8";
         String expr = "var " + uniq + " = " + s + ";";
-        System.err.println(expr);
         try {
             V8Object o = runtime.executeObjectScript(expr);
-            arr.push(o);
-            return arr;
+            return true;
         } catch (V8ScriptCompilationException e) {
             logger.info(e.getClass().toString());
             logger.info(e.getMessage());
             if (getTerminateOnBadData()) {
                 throw e;
             }
-            return null;
+            return false;
         }
     }
 
     @Override
     public void process(Object obj) throws Exception {
         if (do_process) {
-            V8Array array = prepareData(obj);
+            boolean prepared = prepareData(obj);
             try {
-                if (null != array) {
-                    script.executeVoidFunction(J2V8JSONHandler.P_PROCESS, array);
-                    array.release();
-                }
+                if (prepared)
+                    script.executeVoidFunction(J2V8JSONHandler.P_PROCESS, null);
             } catch (Exception e) {
                 do_process = false;
                 System.err.println(e.getClass().toString());
@@ -185,8 +180,6 @@ public class J2V8JSONHandler extends BasicHandler {
             }
         }
     }
-
-
 }
 
 

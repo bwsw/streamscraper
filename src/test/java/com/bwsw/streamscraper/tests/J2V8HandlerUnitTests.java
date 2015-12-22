@@ -111,4 +111,25 @@ public class J2V8HandlerUnitTests {
         }
     }
 
+    @Test
+    public void test007() throws Exception {
+        J2V8JSONHandler h = new J2V8JSONHandler(
+                readFile("../../src/main/resources/j2v8test07.js",
+                        Charset.defaultCharset()), 1);
+        h.init();
+        try {
+            String data = readFile("../../src/main/resources/j2v8test07_data.js", Charset.defaultCharset());
+            long start = System.currentTimeMillis();
+            for (int i = 0; i < 1000000; i++)
+                h.process(data);
+            long elapsedTime = System.currentTimeMillis() - start;
+            System.err.println(elapsedTime);
+            assertEquals(true, true);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            assertEquals(true, false);
+        }
+    }
+
+
 }
