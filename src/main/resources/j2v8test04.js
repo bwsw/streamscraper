@@ -12,6 +12,11 @@ function makeid()
 
 var handler = {
     'init': function () {
+        // init
+        id = makeid();
+        kv_store_set(id,1);
+        id = makeid();
+        var v = kv_store_get(id);
     },
     'shutdown': function() {
         // on shutdown
@@ -22,7 +27,8 @@ var handler = {
     'process': function(data) {
         // on process
     },
-    'commit_interval': 60,
-    'terminate_on_bad_data': true,
-    'terminate_on_bad_eval': true,
+    'commit_interval': 30,
+    'terminate_on_bad_data': false,
+    'terminate_on_bad_eval': false,
+
 };

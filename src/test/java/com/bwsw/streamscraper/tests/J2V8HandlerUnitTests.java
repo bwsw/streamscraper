@@ -3,11 +3,9 @@ package com.bwsw.streamscraper.tests;
 import com.bwsw.streamscraper.system.models.HashKeyValueStoreStub;
 import com.bwsw.streamscraper.system.models.J2V8JSONHandler;
 import com.bwsw.streamscraper.system.models.adapters.J2V8KeyValueStoreCallbackFactory;
-import org.json.simple.parser.ParseException;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
 
-import javax.script.ScriptException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -46,41 +44,71 @@ public class J2V8HandlerUnitTests {
 
     @Test
     public void test001() throws Exception {
+        J2V8JSONHandler h = new J2V8JSONHandler(
+                readFile("../../src/main/resources/j2v8test01.js",
+                        Charset.defaultCharset()), 1);
+        h.init();
+        assertEquals(60, h.getCommitInterval());
+        assertEquals(true, h.getTerminateOnBadData());
+        assertEquals(true, h.getTerminateOnBadEval());
+    }
+
+    @Test
+    public void test002() throws Exception {
+        J2V8JSONHandler h = new J2V8JSONHandler(
+                readFile("../../src/main/resources/j2v8test02.js",
+                        Charset.defaultCharset()), 1);
+        h.init();
+        assertEquals(1, h.getCommitInterval());
+        assertEquals(true, h.getTerminateOnBadData());
+        assertEquals(true, h.getTerminateOnBadEval());
+    }
+
+    @Test
+    public void test004() throws Exception {
+        J2V8JSONHandler h = new J2V8JSONHandler(
+                readFile("../../src/main/resources/j2v8test04.js",
+                        Charset.defaultCharset()), 1);
+        h.init();
+        assertEquals(30, h.getCommitInterval());
+        assertEquals(false, h.getTerminateOnBadData());
+        assertEquals(false, h.getTerminateOnBadEval());
+    }
+
+    @Test
+    public void test005() throws Exception {
+        J2V8JSONHandler h = new J2V8JSONHandler(
+                readFile("../../src/main/resources/j2v8test02.js",
+                        Charset.defaultCharset()), 1);
+        h.init();
+        assertEquals(1, h.getCommitInterval());
+        assertEquals(true, h.getTerminateOnBadData());
         try {
-            J2V8JSONHandler h = new J2V8JSONHandler(
-                    readFile("../../src/main/resources/j2v8test01.js",
-                            Charset.defaultCharset()), 1);
-            h.init();
-            h.shutdown();
+            h.process(readFile("../../src/main/resources/j2v8test02_data.js",
+                    Charset.defaultCharset()));
+            assertEquals(true, false);
         } catch (Exception e) {
-            System.err.println(e.getClass().toString());
             System.err.println(e.getMessage());
+            assertEquals(true, true);
         }
     }
 
     @Test
-    public void test002() throws ParseException, ScriptException {
-
+    public void test006() throws Exception {
+        J2V8JSONHandler h = new J2V8JSONHandler(
+                readFile("../../src/main/resources/j2v8test04.js",
+                        Charset.defaultCharset()), 1);
+        h.init();
+        assertEquals(30, h.getCommitInterval());
+        assertEquals(false, h.getTerminateOnBadData());
         try {
-            J2V8JSONHandler h = new J2V8JSONHandler(
-                    readFile("../../src/main/resources/j2v8test01.js",
-                            Charset.defaultCharset()), 1);
-
-            long start = System.currentTimeMillis();
-            for (int i = 0; i < 1000000; i++)
-                h.init();
-            long elapsedTime = System.currentTimeMillis() - start;
-            System.err.println("Time init() spent: " + new Long(elapsedTime).toString());
-
+            h.process(readFile("../../src/main/resources/j2v8test04_data.js",
+                    Charset.defaultCharset()));
+            assertEquals(true, true);
         } catch (Exception e) {
-            System.err.println(e.getClass().toString());
             System.err.println(e.getMessage());
+            assertEquals(true, false);
         }
-    }
-
-    @Test
-    public void test003() {
-        assertEquals(true, true);
     }
 
 }

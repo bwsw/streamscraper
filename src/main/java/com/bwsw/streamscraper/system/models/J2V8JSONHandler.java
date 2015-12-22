@@ -122,30 +122,70 @@ public class J2V8JSONHandler extends BasicHandler {
             }
     }
 
+    public int getCommitInterval() {
+        try {
+            int ci = script.getInteger("commit_interval");
+            return ci;
+        } catch (V8ResultUndefined e) {
+            return this.commit_interval;
+        }
+    }
+
+    public boolean getTerminateOnBadData() {
+        try {
+            boolean tbd = script.getBoolean("terminate_on_bad_data");
+            return tbd;
+        } catch (V8ResultUndefined e) {
+            return true;
+        }
+    }
+
+    public boolean getTerminateOnBadEval() {
+        try {
+            boolean tbe = script.getBoolean("terminate_on_bad_eval");
+            return tbe;
+        } catch (V8ResultUndefined e) {
+            return true;
+        }
+    }
+
     protected V8Array prepareData(Object object) throws Exception {
         V8Array arr = new V8Array(runtime);
         String s = (String) object;
-        V8Object o = runtime.executeObjectScript(s);
-        // TODO: fix null etc.
-        if (null == o)
-            throw new JSONCompileException("Failed to compile `" + s + "' to JSON.");
-        arr.push(o);
-        return arr;
+        String uniq = "v_cd6a84247215681203b961c73d47dca8";
+        String expr = "var " + uniq + " = " + s + ";";
+        System.err.println(expr);
+        try {
+            V8Object o = runtime.executeObjectScript(expr);
+            arr.push(o);
+            return arr;
+        } catch (V8ScriptCompilationException e) {
+            logger.info(e.getClass().toString());
+            logger.info(e.getMessage());
+            if (getTerminateOnBadData()) {
+                throw e;
+            }
+            return null;
+        }
     }
 
     @Override
     public void process(Object obj) throws Exception {
-        if (do_process)
+        if (do_process) {
+            V8Array array = prepareData(obj);
             try {
-                V8Array array = prepareData(obj);
-                script.executeVoidFunction(J2V8JSONHandler.P_PROCESS, array);
-                array.release();
+                if (null != array) {
+                    script.executeVoidFunction(J2V8JSONHandler.P_PROCESS, array);
+                    array.release();
+                }
             } catch (Exception e) {
                 do_process = false;
                 System.err.println(e.getClass().toString());
                 System.err.println(e.getMessage());
             }
+        }
     }
+
 
 }
 
