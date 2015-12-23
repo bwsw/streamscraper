@@ -19,15 +19,24 @@ public class J2V8Handler extends BasicHandler {
     static String P_INIT = "init";
     static String P_COMMIT = "commit";
     static String uniq = "v_cd6a84247215681203b961c73d47dca8";
+
     private static ArrayList<ICallbackFactory> callback_factory_list;
-    CachedJSVar ci, tbd, tbe, mf, as;
+
+    CachedJSVar ci,
+            tbd,
+            tbe,
+            mf,
+            as;
+
+    boolean do_init,
+            do_process,
+            do_shutdown,
+            do_commit;
+
     V8 runtime;
     V8Object script;
     Logger logger;
-    boolean do_init;
-    boolean do_process;
-    boolean do_shutdown;
-    boolean do_commit;
+
     public J2V8Handler(String code, int commit_interval)
             throws
             JSONCompileException,
@@ -41,6 +50,7 @@ public class J2V8Handler extends BasicHandler {
         as = new CachedJSVar();
 
         String uniq_h = "handler";
+
         runtime = V8.createV8Runtime();
         logger = LoggerFactory.getLogger(J2V8Handler.class);
 
@@ -48,6 +58,7 @@ public class J2V8Handler extends BasicHandler {
 
         for (ICallbackFactory f : callback_factory_list)
             f.generate(this);
+
         runtime.executeVoidScript("function get_event() { return " + uniq + ";}");
         runtime.executeVoidScript(code);
 
