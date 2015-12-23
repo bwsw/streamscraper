@@ -22,7 +22,7 @@ public class J2V8Handler extends BasicHandler {
 
     private static ArrayList<ICallbackFactory> callback_factory_list;
 
-    CachedJSVar ci,
+    J2V8CachedVar ci,
             tbd,
             tbe,
             mf,
@@ -43,11 +43,11 @@ public class J2V8Handler extends BasicHandler {
             NoSuchAlgorithmException {
         super(commit_interval);
 
-        ci = new CachedJSVar();
-        tbd = new CachedJSVar();
-        tbe = new CachedJSVar();
-        mf = new CachedJSVar();
-        as = new CachedJSVar();
+        ci = new J2V8CachedVar();
+        tbd = new J2V8CachedVar();
+        tbe = new J2V8CachedVar();
+        mf = new J2V8CachedVar();
+        as = new J2V8CachedVar();
 
         String uniq_h = "handler";
 
@@ -223,37 +223,7 @@ public class J2V8Handler extends BasicHandler {
 
     public enum MSG_FORMAT {JSON, AVRO, UNKNOWN}
 
-    class CachedJSVar {
-        public boolean is_cached = false;
-        public int int_variant = 0;
-        public boolean bool_variant = false;
-        public String string_variant = "";
 
-        public int getOrRequire(int v) {
-            if (is_cached)
-                return int_variant;
-            is_cached = true;
-            int_variant = v;
-            return int_variant;
-        }
-
-        public boolean getOrRequire(boolean v) {
-            if (is_cached)
-                return bool_variant;
-            is_cached = true;
-            bool_variant = v;
-            return bool_variant;
-        }
-
-        public String getOrRequire(String v) {
-            if (is_cached)
-                return string_variant;
-            is_cached = true;
-            string_variant = v;
-            return string_variant;
-        }
-
-    }
 }
 
 
