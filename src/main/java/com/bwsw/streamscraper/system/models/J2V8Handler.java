@@ -20,6 +20,7 @@ public class J2V8Handler extends BasicHandler {
     static String P_COMMIT = "commit";
     static String uniq = "v_cd6a84247215681203b961c73d47dca8";
     private static ArrayList<ICallbackFactory> callback_factory_list;
+    CachedJSVar ci, tbd, tbe, mf, as;
     V8 runtime;
     V8Object script;
     Logger logger;
@@ -27,12 +28,18 @@ public class J2V8Handler extends BasicHandler {
     boolean do_process;
     boolean do_shutdown;
     boolean do_commit;
-
     public J2V8Handler(String code, int commit_interval)
             throws
             JSONCompileException,
             NoSuchAlgorithmException {
         super(commit_interval);
+
+        ci = new CachedJSVar();
+        tbd = new CachedJSVar();
+        tbe = new CachedJSVar();
+        mf = new CachedJSVar();
+        as = new CachedJSVar();
+
         String uniq_h = "handler";
         runtime = V8.createV8Runtime();
         logger = LoggerFactory.getLogger(J2V8Handler.class);
@@ -123,7 +130,7 @@ public class J2V8Handler extends BasicHandler {
 
     public int getCommitInterval() {
         try {
-            int ci = script.getInteger("commit_interval");
+            int ci = this.ci.getOrRequire(script.getInteger("commit_interval"));
             return ci;
         } catch (V8ResultUndefined e) {
             return this.commit_interval;
@@ -132,7 +139,7 @@ public class J2V8Handler extends BasicHandler {
 
     public boolean getTerminateOnBadData() {
         try {
-            boolean tbd = script.getBoolean("terminate_on_bad_data");
+            boolean tbd = this.tbd.getOrRequire(script.getBoolean("terminate_on_bad_data"));
             return tbd;
         } catch (V8ResultUndefined e) {
             return true;
@@ -141,7 +148,7 @@ public class J2V8Handler extends BasicHandler {
 
     public boolean getTerminateOnBadEval() {
         try {
-            boolean tbe = script.getBoolean("terminate_on_bad_eval");
+            boolean tbe = this.tbe.getOrRequire(script.getBoolean("terminate_on_bad_eval"));
             return tbe;
         } catch (V8ResultUndefined e) {
             return true;
@@ -150,7 +157,7 @@ public class J2V8Handler extends BasicHandler {
 
     public MSG_FORMAT getMessageFormat() {
         try {
-            String mf = script.getString("message_format");
+            String mf = this.mf.getOrRequire(script.getString("message_format"));
             if (null == mf)
                 return MSG_FORMAT.JSON;
             if (mf.equals("json"))
@@ -165,7 +172,7 @@ public class J2V8Handler extends BasicHandler {
 
     public String getAvroSchema() {
         try {
-            String schema = script.getString("avro_schema");
+            String schema = this.as.getOrRequire(script.getString("avro_schema"));
             return schema;
         } catch (V8ResultUndefined e) {
             return null;
@@ -204,6 +211,38 @@ public class J2V8Handler extends BasicHandler {
     }
 
     public enum MSG_FORMAT {JSON, AVRO, UNKNOWN}
+
+    class CachedJSVar {
+        public boolean is_cached = false;
+        public int int_variant = 0;
+        public boolean bool_variant = false;
+        public String string_variant = "";
+
+        public int getOrRequire(int v) {
+            if (is_cached)
+                return int_variant;
+            is_cached = true;
+            int_variant = v;
+            return int_variant;
+        }
+
+        public boolean getOrRequire(boolean v) {
+            if (is_cached)
+                return bool_variant;
+            is_cached = true;
+            bool_variant = v;
+            return bool_variant;
+        }
+
+        public String getOrRequire(String v) {
+            if (is_cached)
+                return string_variant;
+            is_cached = true;
+            string_variant = v;
+            return string_variant;
+        }
+
+    }
 }
 
 
