@@ -8,8 +8,11 @@ class J2V8CachedVar {
     int int_variant;
     boolean bool_variant;
     String string_variant;
+    long expire_int;
+    long will_expire_at;
 
-    public J2V8CachedVar() {
+    public J2V8CachedVar(long expire_int) {
+        this.expire_int = expire_int;
         is_cached = false;
         int_variant = 0;
         bool_variant = false;
