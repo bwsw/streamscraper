@@ -1,7 +1,7 @@
 package com.bwsw.streamscraper.tests;
 
 import com.bwsw.streamscraper.system.models.HashKeyValueStoreStub;
-import com.bwsw.streamscraper.system.models.J2V8JSONHandler;
+import com.bwsw.streamscraper.system.models.J2V8Handler;
 import com.bwsw.streamscraper.system.models.adapters.j2v8.KeyValueStoreCallbackFactory;
 import org.junit.*;
 import org.junit.runners.MethodSorters;
@@ -19,7 +19,7 @@ public class J2V8HandlerUnitTests {
 
     @BeforeClass
     public static void setUpBeforeClass() throws java.lang.Exception {
-        J2V8JSONHandler.addCallbackFactory(
+        J2V8Handler.addCallbackFactory(
                 new KeyValueStoreCallbackFactory(
                         new HashKeyValueStoreStub<>()));
     }
@@ -44,7 +44,7 @@ public class J2V8HandlerUnitTests {
 
     @Test
     public void test001() throws Exception {
-        J2V8JSONHandler h = new J2V8JSONHandler(
+        J2V8Handler h = new J2V8Handler(
                 readFile("../../src/main/resources/js/j2v8test01.js",
                         Charset.defaultCharset()), 1);
         h.init();
@@ -55,7 +55,7 @@ public class J2V8HandlerUnitTests {
 
     @Test
     public void test002() throws Exception {
-        J2V8JSONHandler h = new J2V8JSONHandler(
+        J2V8Handler h = new J2V8Handler(
                 readFile("../../src/main/resources/js/j2v8test02.js",
                         Charset.defaultCharset()), 1);
         h.init();
@@ -66,7 +66,7 @@ public class J2V8HandlerUnitTests {
 
     @Test
     public void test004() throws Exception {
-        J2V8JSONHandler h = new J2V8JSONHandler(
+        J2V8Handler h = new J2V8Handler(
                 readFile("../../src/main/resources/js/j2v8test04.js",
                         Charset.defaultCharset()), 1);
         h.init();
@@ -77,7 +77,7 @@ public class J2V8HandlerUnitTests {
 
     @Test
     public void test005() throws Exception {
-        J2V8JSONHandler h = new J2V8JSONHandler(
+        J2V8Handler h = new J2V8Handler(
                 readFile("../../src/main/resources/js/j2v8test02.js",
                         Charset.defaultCharset()), 1);
         h.init();
@@ -95,7 +95,7 @@ public class J2V8HandlerUnitTests {
 
     @Test
     public void test006() throws Exception {
-        J2V8JSONHandler h = new J2V8JSONHandler(
+        J2V8Handler h = new J2V8Handler(
                 readFile("../../src/main/resources/js/j2v8test04.js",
                         Charset.defaultCharset()), 1);
         h.init();
@@ -113,7 +113,7 @@ public class J2V8HandlerUnitTests {
 
     @Test
     public void test007() throws Exception {
-        J2V8JSONHandler h = new J2V8JSONHandler(
+        J2V8Handler h = new J2V8Handler(
                 readFile("../../src/main/resources/js/j2v8test07.js",
                         Charset.defaultCharset()), 1);
         h.init();

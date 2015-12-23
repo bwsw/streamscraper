@@ -12,32 +12,30 @@ import java.util.ArrayList;
 /**
  * Created by ivan on 18.12.15.
  */
-public class J2V8JSONHandler extends BasicHandler {
+public class J2V8Handler extends BasicHandler {
 
     static String P_PROCESS = "process";
     static String P_SHUTDOWN = "shutdown";
     static String P_INIT = "init";
     static String P_COMMIT = "commit";
     static String uniq = "v_cd6a84247215681203b961c73d47dca8";
-
     private static ArrayList<ICallbackFactory> callback_factory_list;
     V8 runtime;
     V8Object script;
     Logger logger;
-
     boolean do_init;
     boolean do_process;
     boolean do_shutdown;
     boolean do_commit;
 
-    public J2V8JSONHandler(String code, int commit_interval)
+    public J2V8Handler(String code, int commit_interval)
             throws
             JSONCompileException,
             NoSuchAlgorithmException {
         super(commit_interval);
         String uniq_h = "handler";
         runtime = V8.createV8Runtime();
-        logger = LoggerFactory.getLogger(J2V8JSONHandler.class);
+        logger = LoggerFactory.getLogger(J2V8Handler.class);
 
         registerLogCallback(runtime, logger);
 
@@ -90,7 +88,7 @@ public class J2V8JSONHandler extends BasicHandler {
     public void shutdown() throws Exception {
         if (do_shutdown)
             try {
-                script.executeVoidFunction(J2V8JSONHandler.P_SHUTDOWN, null);
+                script.executeVoidFunction(J2V8Handler.P_SHUTDOWN, null);
             } catch (Exception e) {
                 do_shutdown = false;
                 System.err.println(e.getClass().toString());
@@ -103,7 +101,7 @@ public class J2V8JSONHandler extends BasicHandler {
     public void init() throws Exception {
         if (do_init)
             try {
-                script.executeVoidFunction(J2V8JSONHandler.P_INIT, null);
+                script.executeVoidFunction(J2V8Handler.P_INIT, null);
             } catch (Exception e) {
                 do_init = false;
                 System.err.println(e.getClass().toString());
@@ -115,7 +113,7 @@ public class J2V8JSONHandler extends BasicHandler {
     public void commit() throws Exception {
         if (do_commit)
             try {
-                script.executeVoidFunction(J2V8JSONHandler.P_COMMIT, null);
+                script.executeVoidFunction(J2V8Handler.P_COMMIT, null);
             } catch (Exception e) {
                 do_commit = false;
                 System.err.println(e.getClass().toString());
@@ -150,6 +148,30 @@ public class J2V8JSONHandler extends BasicHandler {
         }
     }
 
+    public MSG_FORMAT getMessageFormat() {
+        try {
+            String mf = script.getString("message_format");
+            if (null == mf)
+                return MSG_FORMAT.JSON;
+            if (mf.equals("json"))
+                return MSG_FORMAT.JSON;
+            if (mf.equals("avro"))
+                return MSG_FORMAT.AVRO;
+            return MSG_FORMAT.UNKNOWN;
+        } catch (V8ResultUndefined e) {
+            return MSG_FORMAT.JSON;
+        }
+    }
+
+    public String getAvroSchema() {
+        try {
+            String schema = script.getString("avro_schema");
+            return schema;
+        } catch (V8ResultUndefined e) {
+            return null;
+        }
+    }
+
     protected boolean prepareData(Object object) throws Exception {
         String s = (String) object;
         String expr = "var " + uniq + " = " + s + ";";
@@ -172,7 +194,7 @@ public class J2V8JSONHandler extends BasicHandler {
             boolean prepared = prepareData(obj);
             try {
                 if (prepared)
-                    script.executeVoidFunction(J2V8JSONHandler.P_PROCESS, null);
+                    script.executeVoidFunction(J2V8Handler.P_PROCESS, null);
             } catch (Exception e) {
                 do_process = false;
                 System.err.println(e.getClass().toString());
@@ -180,6 +202,8 @@ public class J2V8JSONHandler extends BasicHandler {
             }
         }
     }
+
+    public enum MSG_FORMAT {JSON, AVRO, UNKNOWN}
 }
 
 

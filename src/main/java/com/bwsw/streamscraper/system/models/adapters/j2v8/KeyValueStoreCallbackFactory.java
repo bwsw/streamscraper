@@ -2,7 +2,7 @@ package com.bwsw.streamscraper.system.models.adapters.j2v8;
 
 import com.bwsw.streamscraper.system.models.BasicHandler;
 import com.bwsw.streamscraper.system.models.HashKeyValueStoreStub;
-import com.bwsw.streamscraper.system.models.J2V8JSONHandler;
+import com.bwsw.streamscraper.system.models.J2V8Handler;
 import com.bwsw.streamscraper.system.models.adapters.ICallbackFactory;
 import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.JavaVoidCallback;
@@ -82,7 +82,7 @@ public class KeyValueStoreCallbackFactory implements ICallbackFactory {
     }
 
     public void generate(BasicHandler h) {
-        J2V8JSONHandler handler = (J2V8JSONHandler) h;
+        J2V8Handler handler = (J2V8Handler) h;
 
         registerKVStoreDelCallback(handler.getRuntime(), store, handler.getLogger());
         registerKVStoreSetCallback(handler.getRuntime(), store, handler.getLogger());
